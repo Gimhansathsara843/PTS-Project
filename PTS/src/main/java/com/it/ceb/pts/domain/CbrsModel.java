@@ -1,18 +1,14 @@
 package com.it.ceb.pts.domain;
 
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 
 
 public class CbrsModel {
-	
+
 	private List<FileUpload> fileList;
-	
+
 	private List<MeterReading> meterReadingList;
-	
+
 	public List<MeterReading> getMeterReadingList() {
 		return meterReadingList;
 	}
@@ -29,18 +25,28 @@ public class CbrsModel {
 		this.fileList = fileList;
 	}
 
-	Map<String, String> provinceList = new LinkedHashMap<String,String>();
+	List<Province> provinceList = new ArrayList<>();
 
-	public Map<String, String> getProvinceList() {
+	public List<Province> getProvinceList() {
 		return provinceList;
 	}
 
-	public void setProvinceList(Map<String, String> provinceList) {
+	public void setProvinceList(List<Province> provinceList) {
 		this.provinceList = provinceList;
 	}
 
+	List<DistributionLicense> divisionList = new ArrayList<>();
+
+	public List<DistributionLicense> getdivisionList() {
+		return divisionList;
+	}
+
+	public void setdivisionList(List<DistributionLicense> divisionList) {
+		this.divisionList = divisionList;
+	}
+
 	public String metercycle;
-	
+
 	public String getMetercycle() {
 		return metercycle;
 	}
@@ -50,8 +56,8 @@ public class CbrsModel {
 	}
 
 	public String filetype;
-	
-	
+
+
 	public String getFiletype() {
 		return filetype;
 	}
@@ -61,7 +67,7 @@ public class CbrsModel {
 	}
 
 	public String division;
-	
+
 	public String getDivision() {
 		return division;
 	}
@@ -69,9 +75,9 @@ public class CbrsModel {
 	public void setDivision(String division) {
 		this.division = division;
 	}
-	
+
 	public String province;
-	
+
 	public String getProvince() {
 		return province;
 	}
@@ -79,9 +85,9 @@ public class CbrsModel {
 	public void setProvince(String province) {
 		this.province = province;
 	}
-	
+
 	public String area;
-	
+
 
 	public String getArea() {
 		return area;
@@ -92,7 +98,7 @@ public class CbrsModel {
 	}
 
 	public String grid;
-	
+
 	public String getGrid() {
 		return grid;
 	}
@@ -100,7 +106,7 @@ public class CbrsModel {
 	public void setGrid(String grid) {
 		this.grid = grid;
 	}
-	
+
 	public String meterpoint;
 
 	public String getMeterpoint() {
@@ -114,13 +120,13 @@ public class CbrsModel {
 	public static long vipPrice = 1000;
 	public static long nonVipPrice = 700;
 	public static long nonVipPriceForMaskeliyaHB = 1000;
-	
+
 	public static long durtPrice = 500;
-	
-	private List<Date> checkedInNew;             
-    private List<Date> checkedOutNew;
-    
-    public List<Date> getCheckedInNew() {
+
+	private List<Date> checkedInNew;
+	private List<Date> checkedOutNew;
+
+	public List<Date> getCheckedInNew() {
 		return this.checkedInNew;
 	}
 
@@ -135,11 +141,11 @@ public class CbrsModel {
 	public void setCheckedOutNew(List<Date> checkedOut) {
 		this.checkedOutNew = checkedOutNew;
 	}
-  
 
-    
-	
-	
+
+
+
+
 	Map<String, String> circuitClosingList = new LinkedHashMap<String,String>();
 
 
@@ -150,13 +156,13 @@ public class CbrsModel {
 	public void setcircuitClosingList(Map<String, String> circuitClosingList) {
 		this.circuitClosingList = circuitClosingList;
 	}
-	
+
 	private String username;
-	
+
 	private String pensionNo;
-	
-	
-	
+
+
+
 	public String getPensionNo() {
 		return pensionNo;
 	}
@@ -166,7 +172,7 @@ public class CbrsModel {
 	}
 
 	private String cancel;
-	
+
 	private String rejectReason;
 	public String getRejectReason() {
 		return rejectReason;
@@ -179,7 +185,7 @@ public class CbrsModel {
 	public String getCancel() {
 		return cancel;
 	}
-	
+
 	//private String mode;
 
 	public void setCancel(String cancel) {
@@ -193,9 +199,9 @@ public class CbrsModel {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	
+
 	private String password;
-	
+
 
 	public String getPassword() {
 		return password;
@@ -216,7 +222,7 @@ public class CbrsModel {
 
 	private String bookingTime;
 
-	
+
 	public String getBookingTime() {
 		return bookingTime;
 	}
@@ -225,7 +231,7 @@ public class CbrsModel {
 		this.bookingTime = bookingTime;
 	}
 
-	
+
 	private String bookingid;
 	public String getBookingid() {
 		return bookingid;
@@ -262,27 +268,27 @@ public class CbrsModel {
 		TotalPrice = totalPrice;
 	}
 
-	
 
-	
+
+
 
 	private String NoOfPeople;
 	private String TotalPrice;
-	
+
 	private String totalCharge;
 	private boolean isSuccess;
 	private String errorMsg;
-	
+
 	private String empEmail;
-	
+
 	private String emailEmp;
-	
-    
-    //Charitha
 
 
-	
-	
+	//Charitha
+
+
+
+
 	public String getEmailEmp() {
 		return emailEmp;
 	}
@@ -325,198 +331,53 @@ public class CbrsModel {
 
 	//Arunodya
 	private String bookingId;
-    private String checkedIn;
-    private String checkedOut;
-    private String noOfRooms;
-    private String status;
-    
-    public String getBookingId() {
-        return bookingId;
-    }
+	private String checkedIn;
+	private String checkedOut;
+	private String noOfRooms;
+	private String status;
 
-    public void setBookingId(String bookingId) {
-        this.bookingId = bookingId;
-    }
+	public String getBookingId() {
+		return bookingId;
+	}
 
-    public String getCheckedIn() {
-        return checkedIn;
-    }
+	public void setBookingId(String bookingId) {
+		this.bookingId = bookingId;
+	}
 
-    public void setCheckedIn(String checkedIn) {
-        this.checkedIn = checkedIn;
-    }
+	public String getCheckedIn() {
+		return checkedIn;
+	}
 
-    public String getCheckedOut() {
-        return checkedOut;
-    }
+	public void setCheckedIn(String checkedIn) {
+		this.checkedIn = checkedIn;
+	}
 
-    public void setCheckedOut(String checkedOut) {
-        this.checkedOut = checkedOut;
-    }
+	public String getCheckedOut() {
+		return checkedOut;
+	}
 
-    public String getNoOfRooms() {
-        return noOfRooms;
-    }
+	public void setCheckedOut(String checkedOut) {
+		this.checkedOut = checkedOut;
+	}
 
-    public void setNoOfRooms(String noOfRooms) {
-        this.noOfRooms = noOfRooms;
-    }
+	public String getNoOfRooms() {
+		return noOfRooms;
+	}
 
-    public String getStatus() {
-        return status;
-    }
+	public void setNoOfRooms(String noOfRooms) {
+		this.noOfRooms = noOfRooms;
+	}
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
-	
-	
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+
 	//Arunodya
-	
-	
-	
-
-
-
-
-private String result;
-private String circuitId;
-private String circuitKeeper;
-private String circuitKeeperMobileNo;
-private String epf;
-private String vip;
-private String circuitcode;
-private String proceed;
-private String circuitName;
-private String telephoneNumber;
-private String otp;
-private String adults;
-private String children;
-private String dutyRooms;
-private String nonVipRooms;
-private String payingUnit;
-private String vipRooms;
-private String message;
-private String name;
-private String email;
-
-private String subject;
-public String getSubject() {
-	return subject;
-}
-
-public void setSubject(String subject) {
-	this.subject = subject;
-}
-
-public String getEmail() {
-	return email;
-}
-
-public void setEmail(String email) {
-	this.email = email;
-}
-
-public String getName() {
-	return name;
-}
-
-public void setName(String name) {
-	this.name = name;
-}
-
-public String getMessage() {
-	return message;
-}
-
-public void setMessage(String message) {
-	this.message = message;
-}
-
-public String getVipRooms() {
-	return vipRooms;
-}
-
-public void setVipRooms(String vipRooms) {
-	this.vipRooms = vipRooms;
-}
-
-public String getPayingUnit() {
-	return payingUnit;
-}
-
-public void setPayingUnit(String payingUnit) {
-	this.payingUnit = payingUnit;
-}
-
-public String getNonVipRooms() {
-	return nonVipRooms;
-}
-
-public void setNonVipRooms(String nonVipRooms) {
-	this.nonVipRooms = nonVipRooms;
-}
-
-public String supervisorEpf;
-
-public String getSupervisorEpf() {
-	return supervisorEpf;
-}
-
-public void setSupervisorEpf(String supervisorEpf) {
-	this.supervisorEpf = supervisorEpf;
-}
-
-public String supervisorTelephoneNo;
-
-
-public String getSupervisorTelephoneNo() {
-	return supervisorTelephoneNo;
-}
-
-public void setSupervisorTelephoneNo(String supervisorTelephoneNo) {
-	this.supervisorTelephoneNo = supervisorTelephoneNo;
-}
-
-public String getDutyRooms() {
-	return dutyRooms;
-}
-
-public void setDutyRooms(String dutyRooms) {
-	this.dutyRooms = dutyRooms;
-}
-
-public String getChildren() {
-	return children;
-}
-
-public void setChildren(String children) {
-	this.children = children;
-}
-
-public String getAdults() {
-	return adults;
-}
-
-public void setAdults(String adults) {
-	this.adults = adults;
-}
-
-public String getOtp() {
-	return otp;
-}
-
-public void setOtp(String otp) {
-	this.otp = otp;
-}
-
-public String getTelephoneNumber() {
-	return telephoneNumber;
-}
-
-public void setTelephoneNumber(String telephoneNumber) {
-	this.telephoneNumber = telephoneNumber;
-}
 
 
 
@@ -524,58 +385,203 @@ public void setTelephoneNumber(String telephoneNumber) {
 
 
 
-LinkedHashMap<String, String> payingList = new LinkedHashMap<String,String>();
+	private String result;
+	private String circuitId;
+	private String circuitKeeper;
+	private String circuitKeeperMobileNo;
+	private String epf;
+	private String vip;
+	private String circuitcode;
+	private String proceed;
+	private String circuitName;
+	private String telephoneNumber;
+	private String otp;
+	private String adults;
+	private String children;
+	private String dutyRooms;
+	private String nonVipRooms;
+	private String payingUnit;
+	private String vipRooms;
+	private String message;
+	private String name;
+	private String email;
+
+	private String subject;
+	public String getSubject() {
+		return subject;
+	}
+
+	public void setSubject(String subject) {
+		this.subject = subject;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public String getVipRooms() {
+		return vipRooms;
+	}
+
+	public void setVipRooms(String vipRooms) {
+		this.vipRooms = vipRooms;
+	}
+
+	public String getPayingUnit() {
+		return payingUnit;
+	}
+
+	public void setPayingUnit(String payingUnit) {
+		this.payingUnit = payingUnit;
+	}
+
+	public String getNonVipRooms() {
+		return nonVipRooms;
+	}
+
+	public void setNonVipRooms(String nonVipRooms) {
+		this.nonVipRooms = nonVipRooms;
+	}
+
+	public String supervisorEpf;
+
+	public String getSupervisorEpf() {
+		return supervisorEpf;
+	}
+
+	public void setSupervisorEpf(String supervisorEpf) {
+		this.supervisorEpf = supervisorEpf;
+	}
+
+	public String supervisorTelephoneNo;
+
+
+	public String getSupervisorTelephoneNo() {
+		return supervisorTelephoneNo;
+	}
+
+	public void setSupervisorTelephoneNo(String supervisorTelephoneNo) {
+		this.supervisorTelephoneNo = supervisorTelephoneNo;
+	}
+
+	public String getDutyRooms() {
+		return dutyRooms;
+	}
+
+	public void setDutyRooms(String dutyRooms) {
+		this.dutyRooms = dutyRooms;
+	}
+
+	public String getChildren() {
+		return children;
+	}
+
+	public void setChildren(String children) {
+		this.children = children;
+	}
+
+	public String getAdults() {
+		return adults;
+	}
+
+	public void setAdults(String adults) {
+		this.adults = adults;
+	}
+
+	public String getOtp() {
+		return otp;
+	}
+
+	public void setOtp(String otp) {
+		this.otp = otp;
+	}
+
+	public String getTelephoneNumber() {
+		return telephoneNumber;
+	}
+
+	public void setTelephoneNumber(String telephoneNumber) {
+		this.telephoneNumber = telephoneNumber;
+	}
+
+
+
+
+
+
+
+	LinkedHashMap<String, String> payingList = new LinkedHashMap<String,String>();
 
 
 	public LinkedHashMap<String, String> getPayingList() {
-	return payingList;
-}
+		return payingList;
+	}
 
-public void setPayingList(LinkedHashMap<String, String> payingList) {
-	this.payingList = payingList;
-}
+	public void setPayingList(LinkedHashMap<String, String> payingList) {
+		this.payingList = payingList;
+	}
 
 	public String getCircuitName() {
-	return circuitName;
-}
+		return circuitName;
+	}
 
-public void setCircuitName(String circuitName) {
-	this.circuitName = circuitName;
-}
+	public void setCircuitName(String circuitName) {
+		this.circuitName = circuitName;
+	}
 
 	public String getProceed() {
-	return proceed;
-}
+		return proceed;
+	}
 
-public void setProceed(String proceed) {
-	this.proceed = proceed;
-}
+	public void setProceed(String proceed) {
+		this.proceed = proceed;
+	}
 
 	public String getCircuitcode() {
-	return circuitcode;
-}
+		return circuitcode;
+	}
 
-public void setCircuitcode(String circuitcode) {
-	this.circuitcode = circuitcode;
-}
+	public void setCircuitcode(String circuitcode) {
+		this.circuitcode = circuitcode;
+	}
 
 	public String getVip() {
-	return vip;
-}
+		return vip;
+	}
 
-public void setVip(String vip) {
-	this.vip = vip;
-}
+	public void setVip(String vip) {
+		this.vip = vip;
+	}
 
 	public String getEpf() {
-	return epf;
-}
+		return epf;
+	}
 
-public void setEpf(String epf) {
-	this.epf = epf;
-}
+	public void setEpf(String epf) {
+		this.epf = epf;
+	}
 
-	
+
 
 	public String getCircuitKeeperMobileNo() {
 		return circuitKeeperMobileNo;
@@ -602,8 +608,8 @@ public void setEpf(String epf) {
 	}
 
 	List<Object[]> circuitList;
-	
-	
+
+
 
 	public List<Object[]> getCircuitList() {
 		return circuitList;
@@ -620,17 +626,17 @@ public void setEpf(String epf) {
 	public void setResult(String result) {
 		this.result = result;
 	}
-	
+
 
 
 	private String closingCircuitId;
-	
-	public String getclosingCircuitId() {
-        return closingCircuitId;
-    }
 
-    public void setclosingCircuitId(String closingCircuitId) {
-        this.closingCircuitId = closingCircuitId;
-    }
+	public String getclosingCircuitId() {
+		return closingCircuitId;
+	}
+
+	public void setclosingCircuitId(String closingCircuitId) {
+		this.closingCircuitId = closingCircuitId;
+	}
 
 }

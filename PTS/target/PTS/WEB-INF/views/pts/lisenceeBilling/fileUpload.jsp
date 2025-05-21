@@ -368,12 +368,13 @@
 <!-- ---------------------------------------------------------------------------------- -->
 
 <jsp:include page="../common/navLisenceeBilling.jsp">
-    <jsp:param name="activeSelection" value="View Upload Meter Points"/>
+    <jsp:param name="activeSelection" value="Upload Files" />
 </jsp:include>
 
-<jsp:include page="../common/selector.jsp">
-    <jsp:param name="btnName" value="View" />
+<jsp:include page="../common/fileUploadSelector.jsp">
+    <jsp:param name="btnName" value="Process" />
 </jsp:include>
+
 
 <!-- to give a gap to hide the footer -->
 <span id="spanItem" style="min-height: 500px; display: inline-block;"></span>
@@ -381,8 +382,6 @@
 <div id="tableContainer" class="container">
 </div>
 
-<!-- File Upload Modal -->
-<jsp:include page="../common/fileUpload.jsp"/>
 
 <!-- Bootstrap JS and Popper.js (order matters) -->
 <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script> -->
@@ -416,34 +415,7 @@
 
     $(document).ready(function() {
 
-        $('#uploadModal').hide();
-        //-------------------------------------------------------------------
-        //            drop down menu
-        //-------------------------------------------------------------------
-        const divDropdown = $('#divisionDropdown');
-        const provDropdown = $('#provinceDropdown');
-        const provinceList = JSON.parse('${provinceList}');
 
-        divDropdown.change(function() {
-            let selectedLicenseCode = divDropdown.val();
-            filterProvince(selectedLicenseCode);
-        });
-
-        function filterProvince(lCode) {
-            const filteredProvinces = provinceList.filter(function(province) {
-                return province.licenseCode === lCode;
-            });
-            provDropdown.empty().append(
-                filteredProvinces.map(function(province) {
-                    return $('<option>', {
-                        value: province.provinceCode,
-                        text: province.provinceName
-                    });
-                })
-            );
-        }
-
-        filterProvince('DD1');//initial rendering
     });
 </script>
 

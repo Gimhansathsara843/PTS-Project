@@ -4,7 +4,7 @@
 <div class="nav bg-light bg-opacity-75">
     <div class="d-flex justify-content-around align-items-center w-100 my-1">
 
-        <div class="nav-item text-center" style="width: 150px;">
+        <div class="nav-item text-center" style="width: 130px;">
             <a class="nav-link d-flex flex-column align-items-center ${param.activeSelection eq 'Dashboard' ? 'activeSelection' : ''}" href="licenseeBillingHome">
                 <div class="icon-container">
                     <img src="./icons/dashboard.svg" alt="Upload Icon" style="width: 40px; height: 40px; margin-bottom: 3px;">
@@ -13,39 +13,66 @@
             </a>
         </div>
 
-        <div class="nav-item text-center">
-            <a class="nav-link d-flex flex-column align-items-center ${param.activeSelection eq 'Upload Meter Points' ? 'activeSelection' : ''}" href="uploadFile">
+        <div class="nav-item text-center" style="width: 130px;">
+            <a class="nav-link d-flex flex-column align-items-center ${param.activeSelection eq 'Upload Files' ? 'activeSelection' : ''}" href="uploadFile">
                 <div class="icon-container">
-                    <img src="./icons/uploadfile.svg" alt="Upload Icon" style="width: 40px; height: 40px; margin-bottom: 3px;">
+                    <img src="./icons/uploadFile.svg" alt="Upload Icon" style="width: 40px; height: 40px; margin-bottom: 3px;">
                 </div>
-                <span style="font-size: 0.8rem;">Upload Meter Points</span>
+                <span style="font-size: 0.8rem;">Upload Files</span>
             </a>
         </div>
 
-        <div class="nav-item text-center">
-            <a class="nav-link d-flex flex-column align-items-center ${param.activeSelection eq 'View Upload Meter Points' ? 'activeSelection' : ''}" href="viewUploadFile">
+        <div class="nav-item text-center" style="width: 130px;">
+            <a class="nav-link d-flex flex-column align-items-center ${param.activeSelection eq 'View Files' ? 'activeSelection' : ''}" href="viewFile">
                 <div class="icon-container">
-                    <img src="./icons/view.svg" alt="View Icon" style="width: 40px; height: 40px;margin-bottom: 3px;">
+                    <img src="./icons/viewFile.svg" alt="View Icon" style="width: 40px; height: 40px;margin-bottom: 3px;">
                 </div>
-                <span style="font-size: 0.8rem;">View Upload Meter Points</span>
+                <span style="font-size: 0.8rem;">View Files</span>
             </a>
         </div>
 
-        <div class="nav-item text-center">
-            <a class="nav-link d-flex flex-column align-items-center ${param.activeSelection eq 'Process Meter Reading' ? 'activeSelection' : ''}" href="processMeterReading">
+        <div class="nav-item text-center" style="width: 145px;">
+            <a class="nav-link d-flex flex-column align-items-center ${param.activeSelection eq 'Process Readings' ? 'activeSelection' : ''}" href="processMeterReading">
                 <div class="icon-container">
                     <img src="./icons/process.svg" alt="Process Icon" style="width: 40px; height: 40px;margin-bottom: 3px;">
                 </div>
-                <span style="font-size: 0.8rem;">Process Meter Reading</span>
+                <span style="font-size: 0.8rem;">Process Readings</span>
             </a>
         </div>
 
-        <div class="nav-item text-center">
-            <a class="nav-link d-flex flex-column align-items-center ${param.activeSelection eq 'View Meter Reading' ? 'activeSelection' : ''}" href="viewMeterReading">
+        <div class="nav-item text-center" style="width: 130px;">
+            <a class="nav-link d-flex flex-column align-items-center ${param.activeSelection eq 'View Readings' ? 'activeSelection' : ''}" href="viewMeterReading">
                 <div class="icon-container">
                     <img src="./icons/view.svg" alt="Search Icon" style="width: 40px; height: 40px;margin-bottom: 3px;">
                 </div>
-                <span style="font-size: 0.8rem;">View Meter Readings</span>
+                <span style="font-size: 0.8rem;">View Readings</span>
+            </a>
+        </div>
+
+        <div class="nav-item text-center" style="width: 130px;">
+            <a class="nav-link d-flex flex-column align-items-center ${param.activeSelection eq 'Meter Search' ? 'activeSelection' : ''}" href="meterSearch">
+                <div class="icon-container">
+                    <img src="./icons/meterSearch.svg" alt="Search Icon" style="width: 40px; height: 40px;margin-bottom: 3px;">
+                </div>
+                <span style="font-size: 0.8rem;">Meter Search</span>
+            </a>
+        </div>
+
+        <div class="nav-item text-center" style="width: 130px;">
+            <a class="nav-link d-flex flex-column align-items-center ${param.activeSelection eq 'Invoice' ? 'activeSelection' : ''}" href="invoice">
+                <div class="icon-container">
+                    <img src="./icons/invoice.svg" alt="Search Icon" style="width: 40px; height: 40px;margin-bottom: 3px;">
+                </div>
+                <span style="font-size: 0.8rem;">Invoice</span>
+            </a>
+        </div>
+
+        <div class="nav-item text-center" style="width: 130px;">
+            <a class="nav-link d-flex flex-column align-items-center ${param.activeSelection eq 'Config' ? 'activeSelection' : ''}" href="config">
+                <div class="icon-container">
+                    <img src="./icons/config.svg" alt="Search Icon" style="width: 40px; height: 40px;margin-bottom: 3px;">
+                </div>
+                <span style="font-size: 0.8rem;">Config</span>
             </a>
         </div>
     </div>

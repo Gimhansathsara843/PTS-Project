@@ -6,37 +6,58 @@
             <table id="resultTable">
                 <thead>
                     <tr>
-                        <th rowspan="2">Serial No</th>
-                        <th rowspan="2">Area</th>
-                        <th rowspan="2">PSS</th>
-                        <th rowspan="2">Status</th>
-                        <th colspan="5">Meter Process Records</th>
-                    </tr>
-                    <tr>
-                        <th>Measure Name</th>
+                        <th>Serial No</th>
+                        <th>Area</th>
+                        <th>PSS</th>
+                        <th>Status</th>
+                        <th>Measure</th>
                         <th>Current Reading</th>
                         <th>Previous Reading</th>
                         <th>Energy</th>
-                        <th>Remark</th>
+                        <th>Exp/Imp</th>
+                        <th>Coincident peak</th>
                     </tr>
                 </thead>
                 <tbody>
                 <c:forEach items="${meterReadingFileList}" var="meterReadingFile">
                     <c:choose>
-                        <c:when test="${not empty meterReadingFile.meterReadingModels}">
-                            <c:forEach items="${meterReadingFile.meterReadingModels}" var="processRecord" varStatus="recordStatus">
+                        <c:when test="${not empty meterReadingFile.meterReadingRecordModels}">
+                            <c:forEach items="${meterReadingFile.meterReadingRecordModels}" var="processRecord" varStatus="status">
                                 <tr>
-                                    <c:if test="${recordStatus.index == 0}">
-                                        <td rowspan="${meterReadingFile.meterReadingModels.size()}">${meterReadingFile.serialNo}</td>
-                                        <td rowspan="${meterReadingFile.meterReadingModels.size()}">${meterReadingFile.area}</td>
-                                        <td rowspan="${meterReadingFile.meterReadingModels.size()}">${meterReadingFile.pss}</td>
-                                        <td rowspan="${meterReadingFile.meterReadingModels.size()}">${meterReadingFile.status}</td>
+                                    <c:if test="${status.index == 0}">
+                                        <td rowspan="6">${meterReadingFile.serialNo}</td>
+                                        <td rowspan="6">${meterReadingFile.area}</td>
+                                        <td rowspan="6">${meterReadingFile.pss}</td>
+                                        <td rowspan="6">${meterReadingFile.status}</td>
                                     </c:if>
                                     <td>${processRecord.measure}</td>
                                     <td class="numeric">${processRecord.currentReading}</td>
                                     <td class="numeric">${processRecord.previousReading}</td>
                                     <td class="numeric">${processRecord.energy}</td>
-                                    <td></td>
+                                    <c:choose>
+                                        <c:when test="${status.index < 3}">
+                                            <c:if test="${status.index == 0}">
+                                                <td class="numeric" rowspan="3">${meterReadingFile.exportEnergy}</td>
+                                            </c:if>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <c:if test="${status.index == 3}">
+                                                <td class="numeric" rowspan="3">${meterReadingFile.importEnergy}</td>
+                                            </c:if>
+                                        </c:otherwise>
+                                    </c:choose>
+                                    <c:choose>
+                                        <c:when test="${status.index < 3}">
+                                            <c:if test="${status.index == 0}">
+                                                <td class="numeric" rowspan="3">${meterReadingFile.coincidentPeak}</td>
+                                            </c:if>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <c:if test="${status.index == 3}">
+                                                <td class="numeric" rowspan="3">...</td>
+                                            </c:if>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </tr>
                             </c:forEach>
                         </c:when>
@@ -46,7 +67,7 @@
                                 <td>${meterReadingFile.area}</td>
                                 <td>${meterReadingFile.pss}</td>
                                 <td>${meterReadingFile.status}</td>
-                                <td class="noRec upload" colspan="5"><a href="#">Re upload</a></td>
+                                <td class="noRec upload" colspan="6"><a href="#">Re upload</a></td>
                             </tr>
                         </c:otherwise>
                     </c:choose>
@@ -75,6 +96,7 @@
         </c:when>
         <c:otherwise>
             <div class="error-message">No data available</div>
+            <span style="min-height: 500px; display: inline-block;"></span>
             <style>
                 .error-message {
                     color: #dc3545;

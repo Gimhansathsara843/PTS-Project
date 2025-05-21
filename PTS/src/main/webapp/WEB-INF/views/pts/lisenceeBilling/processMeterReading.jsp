@@ -369,16 +369,16 @@
 <!--                         CONTENT                                                    -->
 <!-- ---------------------------------------------------------------------------------- -->
 <jsp:include page="../common/navLisenceeBilling.jsp">
-    <jsp:param name="activeSelection" value="Process Meter Reading" />
+    <jsp:param name="activeSelection" value="Process Readings" />
 </jsp:include>
 
 <jsp:include page="../common/selector.jsp">
     <jsp:param name="btnName" value="Process" />
 </jsp:include>
 
-<span id="spanItem" style="min-height: 500px; display: inline-block;"></span>
-
 <div id="tableContainer" class="container"></div>
+
+<span id="spanItem" style="min-height: 500px; display: inline-block;"></span>
 
 <!-- ---------------------------------------------------------------------------------- -->
 <!--                         FOOTER                                                     -->
@@ -414,35 +414,6 @@
         table.hide();
 
         //-------------------------------------------------------------------
-        //            drop down menu
-        //-------------------------------------------------------------------
-        const divDropdown = $('#divisionDropdown');
-        const provDropdown = $('#provinceDropdown');
-        const provinceList = JSON.parse('${provinceList}');
-        console.log(provinceList);
-
-        divDropdown.change(function() {
-            let selectedLicenseCode = divDropdown.val();
-            filterProvince(selectedLicenseCode);
-        });
-
-        function filterProvince(lCode) {
-            const filteredProvinces = provinceList.filter(function(province) {
-                return province.licenseCode === lCode;
-            });
-            provDropdown.empty().append(
-                filteredProvinces.map(function(province) {
-                    return $('<option>', {
-                        value: province.provinceCode,
-                        text: province.provinceName
-                    });
-                })
-            );
-        }
-
-        filterProvince('DD1');//initial rendering
-
-        //-------------------------------------------------------------------
         //            file processing
         //-------------------------------------------------------------------
 
@@ -459,6 +430,7 @@
             table.hide();
 
             var $button = $('#click_btn');
+            $('#spanItem').css('display', 'inline-block');
             $button.val('Processing...').prop('disabled', true);
             $label.text('Please wait ...');
 

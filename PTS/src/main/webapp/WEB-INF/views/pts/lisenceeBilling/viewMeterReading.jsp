@@ -154,30 +154,30 @@
             font-family: Verdana, Geneva, Tahoma, sans-serif;
         }
 
-        .available {
+        .avaimsg {
             background-color: rgb(3, 213, 3);
         }
 
-        .unavailable {
+        .unavaimsg {
             background-color: rgb(252, 22, 22);
         }
 
 
-        .eve_available {
+        .eve_avaimsg {
             background-image: linear-gradient(to right, rgba(3, 213, 3, 0) 50%, rgb(3, 213, 3) 50%);
         }
 
-        .eve_unavailable {
+        .eve_unavaimsg {
             background-image: linear-gradient(to right, rgba(3, 213, 3, 0) 50%, rgb(252, 22, 22) 50%);
 
         }
 
-        .mor_available {
+        .mor_avaimsg {
             background-image: linear-gradient(to right, rgb(3, 213, 3) 50%, rgba(3, 213, 3, 0) 50%);
 
         }
 
-        .mor_unavailable {
+        .mor_unavaimsg {
             background-image: linear-gradient(to right, rgb(252, 22, 22) 50%, rgba(3, 213, 3, 0) 50%);
 
         }
@@ -241,11 +241,11 @@
             cursor: pointer;
         }
 
-        .btn_unavailable {
+        .btn_unavaimsg {
             cursor: not-allowed;
         }
 
-        .btn_available {
+        .btn_avaimsg {
             cursor: pointer;
         }
 
@@ -368,7 +368,7 @@
 <!-- ---------------------------------------------------------------------------------- -->
 
 <jsp:include page="../common/navLisenceeBilling.jsp">
-    <jsp:param name="activeSelection" value="View Meter Reading"/>
+    <jsp:param name="activeSelection" value="View Readings"/>
 </jsp:include>
 
 <jsp:include page="../common/selector.jsp">
@@ -376,13 +376,15 @@
 </jsp:include>
 
 <!-- to give a gap to hide the footer -->
+<span style="min-height: 500px; display: inline-block;"></span>
+
 <span id="spanItem" style="min-height: 500px; display: inline-block;"></span>
 
 <div id="tableContainer" class="container">
 </div>
 
 <!-- File Upload Modal -->
-<jsp:include page="../common/fileUpload.jsp"/>
+<jsp:include page="../common/reUploadFile.jsp"/>
 
 <!-- Bootstrap JS and Popper.js (order matters) -->
 <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script> -->
@@ -415,60 +417,31 @@
 <script>
 
     $(document).ready(function() {
-
-        $('#uploadModal').hide();
-        //-------------------------------------------------------------------
-        //            drop down menu
-        //-------------------------------------------------------------------
-        const divDropdown = $('#divisionDropdown');
-        const provDropdown = $('#provinceDropdown');
-        const provinceList = JSON.parse('${provinceList}');
-
-        divDropdown.change(function() {
-            let selectedLicenseCode = divDropdown.val();
-            filterProvince(selectedLicenseCode);
-        });
-
-        function filterProvince(lCode) {
-            const filteredProvinces = provinceList.filter(function(province) {
-                return province.licenseCode === lCode;
-            });
-            provDropdown.empty().append(
-                filteredProvinces.map(function(province) {
-                    return $('<option>', {
-                        value: province.provinceCode,
-                        text: province.provinceName
-                    });
-                })
-            );
-        }
-
-        filterProvince('DD1');//initial rendering
+        let msg = $('#message');
 
         //-------------------------------------------------------------------
         //            view processing
         //-------------------------------------------------------------------
         const btn = $('#click_btn');
-        const uploadBtn = $('#uploadButton');
         const table = $('#tableContainer');
 
-        btn.click(function() {
+        btn.click(function(e) {
+            e.preventDefault();
 
             let billCycle = $('#billCycle').val();
             localStorage.setItem('selectedBillCycle', billCycle);
-            let division = divDropdown.val();
+            let division = $('#divisionDropdown').val();
             localStorage.setItem('selectedDivision', division);
-            let province = provDropdown.val();
+            let province = $('#provinceDropdown').val();
             localStorage.setItem('selectedProvince', province);
-            let lable = $('#processMsg');
-            lable.text('').css('color', 'black');
 
             // Validate if dropdown values are selected
             if (!billCycle || !division || !province) {
-                lable.css('color', 'red').text('Please select all required fields.');
-                setTimeout(function(){lable.text('');}, 5000);
+                msg.text('Please select all fields.');
+                msg.text('Please select all fields.');
                 return;
             }
+
             btn.val('Processing...').prop('disabled', true);
 
             // Call endpoint with parameters
@@ -479,41 +452,44 @@
             );
         });
 
+        //-------------------------------------------------------------------
+        //            error files re processing
+        //-------------------------------------------------------------------
+        const uploadBtn = $('#uploadButton');
+
         $(document).on('click', '.upload', function(e) {
             e.preventDefault();
             $('#uploadModal').modal('show');
         });
 
-// Display selected filename
+        // Display selected filename
         $('#fileInput').on('change', function() {
             const fileName = $(this).val().split('\\').pop();
             $('#displayData').text(fileName);
         });
 
-// Handle upload button click
+        // Handle upload button click
         uploadBtn.on('click', function() {
             const fileInput = $('#fileInput')[0];
             if (fileInput.files.length > 0) {
                 const formData = new FormData();
                 formData.append('file', fileInput.files[0]);
-                formData.append('billCycle',localStorage.getItem('selectedBillCycle'));
+                formData.append('billCycle', localStorage.getItem('selectedBillCycle'));
                 uploadBtn.prop('disabled', true).text('Processing...');
 
                 $.ajax({
                     url: '/PTS/reProcess',
                     type: 'POST',
                     data: formData,
-                    processData: false,  // Don't process the files
-                    contentType: false,  // Set to false, browser will set content type to multipart/form-data
-                    cache: false,        // Disable caching
-                    timeout: 60000,      // Set timeout to 1 minute
+                    processData: false,
+                    contentType: false,
+                    cache: false,
+                    timeout: 60000,
                     beforeSend: function(xhr) {
                         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
                     },
                     success: function(response) {
-                       uploadBtn.prop('disabled', false).text('Upload');
-                       $('#displayData').text('File uploaded successfully: ' + response);
-                       //hide model after 1.5 seconds
+                        uploadBtn.prop('disabled', false).text('Upload');
                         setTimeout(function(){
                             $('#uploadModal').modal('hide');
                             loadMeterReadingList(
@@ -526,9 +502,9 @@
                     error: function(xhr, status, error) {
                         uploadBtn.prop('disabled', false).text('Upload');
                         if (xhr.status === 400) {
-                            $('#displayData').text('Error: No file uploaded');
+                            msg.text(xhr.responseJSON.message);
                         } else {
-                            $('#displayData').text('An error occurred: ' + (xhr.responseText || error));
+                            msg.text('An error occurred while uploading the file.');
                         }
                     }
                 });
@@ -549,8 +525,7 @@
                     btn.val('View').prop('disabled', false);
                     table.hide();
                     $('#spanItem').css('display', 'inline-block');
-                    lable.css('color', 'red').text('An error occurred...');
-                    setTimeout(function(){lable.text('');}, 5000);
+                    msg.text('An error occurred while loading the data.');
                 }
             });
         }

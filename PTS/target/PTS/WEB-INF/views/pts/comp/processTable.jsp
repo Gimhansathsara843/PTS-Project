@@ -5,6 +5,7 @@
     <c:choose>
         <c:when test="${not empty msg}">
             <div class="error-message">${msg}</div>
+            <span style="min-height: 500px; display: inline-block;"></span>
             <style>
                 .error-message {
                     color: #dc3545;
@@ -28,36 +29,60 @@
                     <th>CURRENT READING</th>
                     <th>PREVIOUS READING</th>
                     <th>ENERGY</th>
-                    <th>REMARK</th>
+                    <th>IMP/EXP</th>
+                    <th>COINCIDENT PEAK</th>
                 </tr>
                 </thead>
                 <tbody id="resultTableBody">
                 <c:forEach items="${processSummary}" var="reading">
                     <c:choose>
-                        <c:when test="${not empty reading.meterProcessRecordModelList}">
-                            <c:forEach items="${reading.meterProcessRecordModelList}" var="record" varStatus="status">
+                        <c:when test="${not empty reading.meterReadingRecordModelList}">
+                            <c:forEach items="${reading.meterReadingRecordModelList}" var="record" varStatus="status">
                                 <tr>
                                     <c:if test="${status.index == 0}">
-                                        <td rowspan="${reading.meterProcessRecordModelList.size()}">${reading.serialNo}</td>
-                                        <td rowspan="${reading.meterProcessRecordModelList.size()}">${reading.pss}</td>
-                                        <td rowspan="${reading.meterProcessRecordModelList.size()}">${reading.status}</td>
-                                        <td rowspan="${reading.meterProcessRecordModelList.size()}">${reading.fileName}</td>
+                                        <td rowspan="6">${reading.serialNo}</td>
+                                        <td rowspan="6">${reading.pss}</td>
+                                        <td rowspan="6">${reading.status}</td>
+                                        <td rowspan="6">${reading.fileName}</td>
                                     </c:if>
-                                    <td>${record.measureName}</td>
+                                    <td>${record.measure}</td>
                                     <td class="numeric">${record.currentReading}</td>
                                     <td class="numeric">${record.previousReading}</td>
                                     <td class="numeric">${record.energy}</td>
-                                    <td></td>
+                                    <c:choose>
+                                        <c:when test="${status.index < 3}">
+                                            <c:if test="${status.index == 0}">
+                                                <td class="numeric" rowspan="3">${reading.exportEnergy}</td>
+                                            </c:if>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <c:if test="${status.index == 3}">
+                                                <td class="numeric" rowspan="3">${reading.importEnergy}</td>
+                                            </c:if>
+                                        </c:otherwise>
+                                    </c:choose>
+                                    <c:choose>
+                                        <c:when test="${status.index < 3}">
+                                            <c:if test="${status.index == 0}">
+                                                <td class="numeric" rowspan="3">${reading.coincidentPeak}</td>
+                                            </c:if>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <c:if test="${status.index == 3}">
+                                                <td class="numeric" rowspan="3">...</td>
+                                            </c:if>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </tr>
                             </c:forEach>
                         </c:when>
                         <c:otherwise>
                             <tr>
                                 <td>${reading.serialNo}</td>
-                                <td>...</td>
+                                <td>${reading.pss}</td>
                                 <td>${reading.status}</td>
                                 <td>${reading.fileName}</td>
-                                <td colspan="5">...</td>
+                                <td colspan="6">...</td>
                             </tr>
                         </c:otherwise>
                     </c:choose>

@@ -50,6 +50,39 @@
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function() {
+        //-------------------------------------------------------------------
+        //            drop down menu
+        //-------------------------------------------------------------------
+        const divDropdown = $('#divisionDropdown');
+        const provDropdown = $('#provinceDropdown');
+        const provinceList = JSON.parse('${provinceList}');
+        console.log(provinceList);
+
+        divDropdown.change(function() {
+            let selectedLicenseCode = divDropdown.val();
+            filterProvince(selectedLicenseCode);
+        });
+
+        function filterProvince(lCode) {
+            const filteredProvinces = provinceList.filter(function(province) {
+                return province.licenseCode === lCode;
+            });
+            provDropdown.empty().append(
+                filteredProvinces.map(function(province) {
+                    return $('<option>', {
+                        value: province.provinceCode,
+                        text: province.provinceName
+                    });
+                })
+            );
+        }
+
+        filterProvince('DD1');//initial rendering
+
+    });
+</script>
 <style>
     .selectUnit label, .selectUnit select {
         font-size: small;

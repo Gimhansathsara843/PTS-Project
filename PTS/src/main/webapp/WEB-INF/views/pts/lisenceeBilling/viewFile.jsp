@@ -154,30 +154,30 @@
             font-family: Verdana, Geneva, Tahoma, sans-serif;
         }
 
-        .avaimsg {
+        .available {
             background-color: rgb(3, 213, 3);
         }
 
-        .unavaimsg {
+        .unavailable {
             background-color: rgb(252, 22, 22);
         }
 
 
-        .eve_avaimsg {
+        .eve_available {
             background-image: linear-gradient(to right, rgba(3, 213, 3, 0) 50%, rgb(3, 213, 3) 50%);
         }
 
-        .eve_unavaimsg {
+        .eve_unavailable {
             background-image: linear-gradient(to right, rgba(3, 213, 3, 0) 50%, rgb(252, 22, 22) 50%);
 
         }
 
-        .mor_avaimsg {
+        .mor_available {
             background-image: linear-gradient(to right, rgb(3, 213, 3) 50%, rgba(3, 213, 3, 0) 50%);
 
         }
 
-        .mor_unavaimsg {
+        .mor_unavailable {
             background-image: linear-gradient(to right, rgb(252, 22, 22) 50%, rgba(3, 213, 3, 0) 50%);
 
         }
@@ -241,11 +241,11 @@
             cursor: pointer;
         }
 
-        .btn_unavaimsg {
+        .btn_unavailable {
             cursor: not-allowed;
         }
 
-        .btn_avaimsg {
+        .btn_available {
             cursor: pointer;
         }
 
@@ -368,7 +368,7 @@
 <!-- ---------------------------------------------------------------------------------- -->
 
 <jsp:include page="../common/navLisenceeBilling.jsp">
-    <jsp:param name="activeSelection" value="View Readings"/>
+    <jsp:param name="activeSelection" value="View Files"/>
 </jsp:include>
 
 <jsp:include page="../common/selector.jsp">
@@ -376,15 +376,11 @@
 </jsp:include>
 
 <!-- to give a gap to hide the footer -->
-<span style="min-height: 500px; display: inline-block;"></span>
-
 <span id="spanItem" style="min-height: 500px; display: inline-block;"></span>
 
 <div id="tableContainer" class="container">
 </div>
 
-<!-- File Upload Modal -->
-<jsp:include page="../common/reUploadFile.jsp"/>
 
 <!-- Bootstrap JS and Popper.js (order matters) -->
 <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script> -->
@@ -417,118 +413,35 @@
 <script>
 
     $(document).ready(function() {
-        let msg = $('#message');
 
+        $('#uploadModal').hide();
         //-------------------------------------------------------------------
-        //            view processing
+        //            drop down menu
         //-------------------------------------------------------------------
-        const btn = $('#click_btn');
-        const table = $('#tableContainer');
+        const divDropdown = $('#divisionDropdown');
+        const provDropdown = $('#provinceDropdown');
+        const provinceList = JSON.parse('${provinceList}');
 
-        btn.click(function(e) {
-            e.preventDefault();
-
-            let billCycle = $('#billCycle').val();
-            localStorage.setItem('selectedBillCycle', billCycle);
-            let division = $('#divisionDropdown').val();
-            localStorage.setItem('selectedDivision', division);
-            let province = $('#provinceDropdown').val();
-            localStorage.setItem('selectedProvince', province);
-
-            // Validate if dropdown values are selected
-            if (!billCycle || !division || !province) {
-                msg.text('Please select all fields.');
-                msg.text('Please select all fields.');
-                return;
-            }
-
-            btn.val('Processing...').prop('disabled', true);
-
-            // Call endpoint with parameters
-            loadMeterReadingList(
-                billCycle,
-                division,
-                province
-            );
+        divDropdown.change(function() {
+            let selectedLicenseCode = divDropdown.val();
+            filterProvince(selectedLicenseCode);
         });
 
-        //-------------------------------------------------------------------
-        //            error files re processing
-        //-------------------------------------------------------------------
-        const uploadBtn = $('#uploadButton');
-
-        $(document).on('click', '.upload', function(e) {
-            e.preventDefault();
-            $('#uploadModal').modal('show');
-        });
-
-        // Display selected filename
-        $('#fileInput').on('change', function() {
-            const fileName = $(this).val().split('\\').pop();
-            $('#displayData').text(fileName);
-        });
-
-        // Handle upload button click
-        uploadBtn.on('click', function() {
-            const fileInput = $('#fileInput')[0];
-            if (fileInput.files.length > 0) {
-                const formData = new FormData();
-                formData.append('file', fileInput.files[0]);
-                formData.append('billCycle', localStorage.getItem('selectedBillCycle'));
-                uploadBtn.prop('disabled', true).text('Processing...');
-
-                $.ajax({
-                    url: '/PTS/reProcess',
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    cache: false,
-                    timeout: 60000,
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-                    },
-                    success: function(response) {
-                        uploadBtn.prop('disabled', false).text('Upload');
-                        setTimeout(function(){
-                            $('#uploadModal').modal('hide');
-                            loadMeterReadingList(
-                                localStorage.getItem('selectedBillCycle'),
-                                localStorage.getItem('selectedDivision'),
-                                localStorage.getItem('selectedProvince')
-                            );
-                        }, 1500);
-                    },
-                    error: function(xhr, status, error) {
-                        uploadBtn.prop('disabled', false).text('Upload');
-                        if (xhr.status === 400) {
-                            msg.text(xhr.responseJSON.message);
-                        } else {
-                            msg.text('An error occurred while uploading the file.');
-                        }
-                    }
-                });
-            }
-        });
-
-        function loadMeterReadingList(billCycle, division, province) {
-            $.ajax({
-                url: '/PTS/viewMeterReadingList',
-                method: 'GET',
-                data: { billCycle, division, province },
-                success: function(data) {
-                    btn.val('View').prop('disabled', false);
-                    $('#spanItem').css('display', 'none');
-                    table.html(data);
-                },
-                error: function(xhr, status, error) {
-                    btn.val('View').prop('disabled', false);
-                    table.hide();
-                    $('#spanItem').css('display', 'inline-block');
-                    msg.text('An error occurred while loading the data.');
-                }
+        function filterProvince(lCode) {
+            const filteredProvinces = provinceList.filter(function(province) {
+                return province.licenseCode === lCode;
             });
+            provDropdown.empty().append(
+                filteredProvinces.map(function(province) {
+                    return $('<option>', {
+                        value: province.provinceCode,
+                        text: province.provinceName
+                    });
+                })
+            );
         }
+
+        filterProvince('DD1');//initial rendering
     });
 </script>
 
