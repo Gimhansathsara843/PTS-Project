@@ -49,4 +49,8 @@ public interface MeterProcessDao {
     List<EnergySummary> CalculateTotalEnergy(List<MeterReading> meterReadingsList,Long BillCycleNo,
                                              String licenseCode, String provinceCode);
     public void saveTotalEnergy(List<EnergySummary> totalEn);
+
+    public Long getCurrentBillCycleNo();
+
+
 }

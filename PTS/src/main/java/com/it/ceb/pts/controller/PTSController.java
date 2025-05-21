@@ -250,6 +250,11 @@ public class PTSController {
 						continue;
 					}
 
+					if (!originalFilename.toLowerCase().endsWith(".zip")) {
+						processingResults.append("Invalid file type for: ").append(originalFilename).append(". Only ZIP files are allowed.\n");
+						continue;
+					}
+
 					// Save ZIP file in the ZIP folder
 					File zipFile = new File(zipDir, originalFilename);
 					file.transferTo(zipFile);
@@ -288,6 +293,14 @@ public class PTSController {
 //		}
 //		model.setProcessingDetails(processingResults.toString());
 		return mo;
+	}
+
+	//send the bill cycle
+	@Transactional
+	@RequestMapping(value = "/getBillCycle", method = RequestMethod.GET, produces = "text/plain")
+	public @ResponseBody String getBillCycle() throws Exception {
+		Long billCycle = meterProcessDao.getCurrentBillCycleNo();
+		return billCycle.toString(); // ✅ returns "436" instead of <Long>436</Long>
 	}
 
 

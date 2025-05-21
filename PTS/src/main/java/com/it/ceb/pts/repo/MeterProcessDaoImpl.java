@@ -365,5 +365,14 @@ public class MeterProcessDaoImpl implements MeterProcessDao {
         }
     }
 
+    @Override
+    public Long getCurrentBillCycleNo() {
+        TypedQuery<Long> query = entityManager.createQuery(
+                "SELECT b.billCycleNo FROM BillCycle b WHERE b.isCurrent = 1",
+                Long.class
+        );
+        return query.getSingleResult();
+    }
+
 
 }
