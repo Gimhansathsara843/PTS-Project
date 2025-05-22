@@ -351,6 +351,16 @@
                 height: 80px;
                 font-size: 0.8em;
             }
+
+            .error-message {
+                color: #dc3545;
+                padding: 10px;
+                margin: 20px;
+                border: 1px solid #dc3545;
+                border-radius: 4px;
+                background-color: #f8d7da;
+                white-space: pre-wrap; /* preserve line breaks in error text */
+            }
         }
     </style>
 
@@ -375,6 +385,12 @@
     <jsp:param name="btnName" value="Process" />
 </jsp:include>
 
+
+<c:if test="${not empty msg}">
+    <div class="error-message">
+        <pre>${msg}</pre>
+    </div>
+</c:if>
 
 <!-- to give a gap to hide the footer -->
 <span id="spanItem" style="min-height: 500px; display: inline-block;"></span>

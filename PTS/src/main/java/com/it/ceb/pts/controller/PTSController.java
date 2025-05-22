@@ -201,45 +201,49 @@ public class PTSController {
 			@RequestParam("files") MultipartFile[] files,
 			@ModelAttribute("model") CbrsModel model,
 			BindingResult bindingResult) throws Exception {
-		System.out.println("Processing uploaded files...");
+
 		ModelAndView mo = new ModelAndView("pts/lisenceeBilling/fileUpload", "model", model);
-		String division = model.getDivision();       // e.g., "LECO"
-		String billCycle = model.getMetercycle();    // e.g., "436"
-		String province = model.getProvince();       // e.g., "WPNL"
 
-		// Path for saving ZIP files: D:\Report\<billCycle>\<division>\<province>
-		String zipSavePath = PathMMS.getReportPath() + File.separator +
-				billCycle + File.separator +
-				division + File.separator +
-				province;
+		String division = model.getDivision();
+		String billCycle = model.getMetercycle();
+		String province = model.getProvince();
 
-		// Path for extracting ZIP contents: D:\ExtractedReports\<billCycle>\<division>\<province>
-		String extractionPath = PathMMS.getReportPath() + File.separator +
-				billCycle + File.separator +
-				division ;
-
-		// Ensure ZIP directory exists
-		File zipDir = new File(zipSavePath);
-		if (!zipDir.exists()) {
-			if (!zipDir.mkdirs()) {
-				System.err.println("Failed to create ZIP directory: " + zipSavePath);
-			//	model.setErrorMessage("Failed to create ZIP directory: " + zipSavePath);
-				return mo;
-			}
-		}
-
-		// Ensure extraction directory exists
-		File extractDir = new File(extractionPath);
-		if (!extractDir.exists()) {
-			if (!extractDir.mkdirs()) {
-				System.err.println("Failed to create extraction directory: " + extractionPath);
-			//	model.setErrorMessage("Failed to create extraction directory: " + extractionPath);
-				return mo;
-			}
-		}
+		String zipSavePath = PathMMS.getReportPath() + File.separator + billCycle + File.separator + division + File.separator + province;
+		String extractionPath = PathMMS.getReportPath() + File.separator + billCycle + File.separator + division;
 
 		boolean filesProcessed = false;
 		StringBuilder processingResults = new StringBuilder();
+		boolean hasValidZipFiles = false;
+
+		// First, check if there are any valid ZIP files
+		for (MultipartFile file : files) {
+			if (!file.isEmpty()) {
+				String originalFilename = file.getOriginalFilename();
+				if (originalFilename != null && !originalFilename.trim().isEmpty() &&
+						originalFilename.toLowerCase().endsWith(".zip")) {
+					hasValidZipFiles = true;
+					break;
+				}
+			}
+		}
+
+		// Only create directories if there are valid ZIP files
+		File zipDir = null;
+		File extractDir = null;
+
+		if (hasValidZipFiles) {
+			zipDir = new File(zipSavePath);
+			if (!zipDir.exists() && !zipDir.mkdirs()) {
+				mo.addObject("msg", "Failed to create ZIP directory: " + zipSavePath);
+				return mo;
+			}
+
+			extractDir = new File(extractionPath);
+			if (!extractDir.exists() && !extractDir.mkdirs()) {
+				mo.addObject("msg", "Failed to create extraction directory: " + extractionPath);
+				return mo;
+			}
+		}
 
 		for (MultipartFile file : files) {
 			if (!file.isEmpty()) {
@@ -255,45 +259,40 @@ public class PTSController {
 						continue;
 					}
 
-					// Save ZIP file in the ZIP folder
+					// Save ZIP file (directories are already created at this point)
 					File zipFile = new File(zipDir, originalFilename);
 					file.transferTo(zipFile);
-					System.out.println("ZIP file saved to: " + zipFile.getAbsolutePath());
-					processingResults.append("ZIP file saved to: " + zipFile.getAbsolutePath() + "\n");
+					processingResults.append("ZIP file saved to: ").append(zipFile.getAbsolutePath()).append("\n");
 
-					// Extract contents to the extraction directory
+					// Extract
 					ZipExtractor.unzip(zipFile.getAbsolutePath(), extractionPath);
-					System.out.println("Extracted into: " + extractDir.getAbsolutePath());
-					processingResults.append("Extracted into: " + extractDir.getAbsolutePath() + "\n");
+					processingResults.append("Extracted into: ").append(extractionPath).append("\n");
 
 					filesProcessed = true;
+
 				} catch (IOException e) {
+					processingResults.append("Error processing file: ").append(file.getOriginalFilename()).append(" - ").append(e.getMessage()).append("\n");
 					e.printStackTrace();
-					String errorMsg = "Error processing file: " + file.getOriginalFilename() + " - " + e.getMessage();
-					System.err.println(errorMsg);
-					processingResults.append(errorMsg + "\n");
 				}
 			}
 		}
 
-		// Populate model for the view
+		if (filesProcessed) {
+			mo.addObject("msg", "Files processed successfully:\n" + processingResults);
+		} else {
+			mo.addObject("msg", "No files were processed:\n" + processingResults);
+		}
+
+		// Repopulate dropdowns
 		List<DistributionLicense> licenseList = DistributionLicenseDao.getLicenseList();
 		List<Province> provinceList = provinceDao.getAllProvince();
 		model.setdivisionList(licenseList);
 		model.setProvinceList(provinceList);
-		mo.addObject("provinceList",
-				new ObjectMapper().writeValueAsString(modelService.getAllProvinces(provinceList)));
+		mo.addObject("provinceList", new ObjectMapper().writeValueAsString(modelService.getAllProvinces(provinceList)));
 
-		// Add processing results to the model
-//		if (filesProcessed) {
-//			model.setSuccessMessage("Files processed successfully. ZIP files saved to: " + zipSavePath +
-//					" and extracted to: " + extractionPath);
-//		} else {
-//			model.setErrorMessage("No files were processed. Please check the logs for details.");
-//		}
-//		model.setProcessingDetails(processingResults.toString());
 		return mo;
 	}
+
 
 	//send the bill cycle
 	@Transactional
