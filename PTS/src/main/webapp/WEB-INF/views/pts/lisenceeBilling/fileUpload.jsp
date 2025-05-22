@@ -352,15 +352,20 @@
                 font-size: 0.8em;
             }
 
-            .error-message {
-                color: #dc3545;
-                padding: 10px;
-                margin: 20px;
-                border: 1px solid #dc3545;
-                border-radius: 4px;
+            div.error-message-zip {
+                color: #721c24;
                 background-color: #f8d7da;
-                white-space: pre-wrap; /* preserve line breaks in error text */
+                border: 1px solid #f5c6cb;
+                padding: 15px;
+                margin: 20px auto;
+                max-width: 800px;
+                font-family: Arial, sans-serif;
+                font-size: 14px;
+                border-radius: 5px;
+                white-space: pre-wrap; /* preserves line breaks */
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
             }
+
         }
     </style>
 
@@ -386,11 +391,11 @@
 </jsp:include>
 
 
-<c:if test="${not empty msg}">
-    <div class="error-message">
-        <pre>${msg}</pre>
-    </div>
-</c:if>
+<!-- Success message box -->
+<div id="successMsg" class="alert alert-success" style="display: none;"></div>
+
+<!-- Error message box -->
+<div id="errorMsg" class="alert alert-danger" style="display: none;"></div>
 
 <!-- to give a gap to hide the footer -->
 <span id="spanItem" style="min-height: 500px; display: inline-block;"></span>
@@ -434,6 +439,30 @@
 
     });
 </script>
+
+<c:if test="${not empty msg}">
+    <script>
+        $(document).ready(function () {
+            var msg = `<c:out value="${msg}" escapeXml="true" />`;
+            var formattedMsg = msg.replace(/\n/g, "<br>");
+
+            console.log("alert messege   "+ msg);
+
+            if (msg.startsWith("Files processed successfully")) {
+                $('#successMsg').html(formattedMsg).fadeIn();
+                setTimeout(() => $('#successMsg').fadeOut(), 7000);
+            } else if (msg.startsWith("No files were processed")) {
+                $('#errorMsg').html(formattedMsg).fadeIn();
+                setTimeout(() => $('#errorMsg').fadeOut(), 7000);
+            } else {
+                // default fallback (if needed)
+                $('#errorMsg').html(formattedMsg).fadeIn();
+            }
+        });
+    </script>
+</c:if>
+
+
 
 </body>
 
