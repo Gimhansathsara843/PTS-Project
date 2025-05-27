@@ -5,10 +5,12 @@ com\it\ceb\pts\domain\MeasureCellId.class
 com\it\ceb\pts\domain\MeterReadingErrLog.class
 com\it\ceb\util\common\model\MeterReadingRecordModel.class
 com\it\ceb\util\common\MailMail.class
+com\it\ceb\pts\domain\FileUploadHeaderId.class
 com\it\ceb\pts\repo\MeterProcessDao.class
 com\it\ceb\pts\repo\FileUploadDao.class
 com\it\ceb\util\common\exceptions\CorruptedFileException.class
 com\it\ceb\pts\domain\GridSubstation.class
+com\it\ceb\pts\domain\FileUploadHeader.class
 com\it\ceb\admin\repo\SecurityDaoImpl.class
 com\it\ceb\pts\domain\CbrsModel.class
 com\it\ceb\pts\domain\MeterModel.class
@@ -34,6 +36,7 @@ com\it\ceb\util\common\model\MeterPointModel.class
 com\it\ceb\util\common\PathMMS.class
 com\it\ceb\pts\domain\BillCycle.class
 com\it\ceb\pts\domain\FileUploadModel.class
+com\it\ceb\pts\repo\FileUploadHeaderDaoImpl.class
 com\it\ceb\pts\domain\DistributionLicense.class
 com\it\ceb\pts\domain\FileUpload.class
 com\it\ceb\util\common\model\ProvinceModel.class
@@ -47,6 +50,7 @@ com\it\ceb\pts\domain\HteSauserm.class
 com\it\ceb\util\common\FolderZipper.class
 com\it\ceb\pts\domain\MeterReadingLog.class
 com\it\ceb\pts\domain\Measure.class
+com\it\ceb\pts\repo\FileUploadHeaderDao.class
 com\it\ceb\util\common\SmsRequest$SmsDetails.class
 com\it\ceb\admin\controller\BaseController.class
 com\it\ceb\util\common\ExcelMeterReader$1.class

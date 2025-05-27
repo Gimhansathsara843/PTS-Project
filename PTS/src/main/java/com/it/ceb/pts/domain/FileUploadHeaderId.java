@@ -15,7 +15,7 @@ import java.util.Objects;
 @Setter
 @Embeddable
 public class FileUploadHeaderId implements Serializable {
-    private static final long serialVersionUID = 2613507929589186077L;
+    private static final long serialVersionUID = 5138741678373660936L;
     @NotNull
     @Column(name = "BILL_CYCLE_NO", nullable = false)
     private Long billCycleNo;
@@ -30,11 +30,6 @@ public class FileUploadHeaderId implements Serializable {
     @Column(name = "PROVINCE", nullable = false, length = 50)
     private String province;
 
-    @Size(max = 100)
-    @NotNull
-    @Column(name = "DISTRIBUTION_DIVISION", nullable = false, length = 100)
-    private String distributionDivision;
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -42,13 +37,12 @@ public class FileUploadHeaderId implements Serializable {
         FileUploadHeaderId entity = (FileUploadHeaderId) o;
         return Objects.equals(this.licensee, entity.licensee) &&
                 Objects.equals(this.province, entity.province) &&
-                Objects.equals(this.distributionDivision, entity.distributionDivision) &&
                 Objects.equals(this.billCycleNo, entity.billCycleNo);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(licensee, province, distributionDivision, billCycleNo);
+        return Objects.hash(licensee, province, billCycleNo);
     }
 
 }

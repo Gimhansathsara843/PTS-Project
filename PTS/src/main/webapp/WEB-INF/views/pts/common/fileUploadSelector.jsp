@@ -13,7 +13,7 @@
 						<div class="selectUnit">
 							<label>Bill cycle</label>
 							<div class="input-group">
-								<form:input path="metercycle" type="text" id="billCycle"
+								<form:input path="billCycle" type="text" id="billCycle"
 											class="form-control" readonly="true"/>
 							</div>
 						</div>
@@ -24,9 +24,9 @@
 						<div class="selectUnit">
 							<label>Distribution division</label>
 							<div class="input-group">
-								<c:if test="${not empty model.divisionList}">
+								<c:if test="${not empty model.licenseList}">
 									<form:select path="division" id="divisionDropdown" class="form-control">
-										<c:forEach var="division" items="${model.divisionList}">
+										<c:forEach var="division" items="${model.licenseList}">
 											<option value="${division.licenseCode}" label="${division.licenseName}"/>
 										</c:forEach>
 									</form:select>

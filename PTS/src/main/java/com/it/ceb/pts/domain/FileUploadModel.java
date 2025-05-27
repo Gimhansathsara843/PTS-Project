@@ -31,9 +31,6 @@ public class FileUploadModel {
 		this.fileList = fileList;
 	}
 
-	
-
-	
 
 	public List<DistributionLicense> getLicenseList() {
 		return licenseList;

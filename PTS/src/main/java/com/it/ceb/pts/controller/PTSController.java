@@ -3,6 +3,7 @@ package com.it.ceb.pts.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -48,6 +49,8 @@ public class PTSController {
 	private ModelService modelService;
 	@Autowired
 	private ProvinceDao provinceDao;
+	@Autowired
+	private com.it.ceb.pts.repo.FileUploadHeaderDao fileUploadHeaderDao;
 
 
 
@@ -115,12 +118,12 @@ public class PTSController {
 	//file uploading
 	@Transactional
 	@RequestMapping(value = "/uploadFile", method = RequestMethod.GET)
-	public ModelAndView uploadFile(@ModelAttribute("model") CbrsModel cbrsModel) throws Exception{
+	public ModelAndView uploadFile(@ModelAttribute("model") FileUploadModel fileUploadModel) throws Exception{
 		List<DistributionLicense> licenseList = DistributionLicenseDao.getLicenseList();
 		List<Province> provinceList = provinceDao.getAllProvince();
-		cbrsModel.setdivisionList(licenseList);
-		cbrsModel.setProvinceList(provinceList);
-		ModelAndView mv= new ModelAndView("pts/lisenceeBilling/fileUpload", "model", cbrsModel);
+		fileUploadModel.setLicenseList(licenseList);
+		fileUploadModel.setProvinceList(provinceList);
+		ModelAndView mv= new ModelAndView("pts/lisenceeBilling/fileUpload", "model", fileUploadModel);
 		mv.addObject("provinceList", new ObjectMapper().writeValueAsString(modelService.getAllProvinces(provinceList)));
 		return mv;
 	}
@@ -194,18 +197,19 @@ public class PTSController {
 
 	//upload file for meter readings=============================================
 
+
 	@Transactional
 	@RequestMapping(value = "/UploadingMeterReadingFileS", method = RequestMethod.POST)
-	public ModelAndView UploadingMeterReadingFileS(
+	public ModelAndView uploadingMeterReadingFileS(
 			HttpServletRequest request,
 			@RequestParam("files") MultipartFile[] files,
-			@ModelAttribute("model") CbrsModel model,
+			@ModelAttribute("model") FileUploadModel model,
 			BindingResult bindingResult) throws Exception {
 
 		ModelAndView mo = new ModelAndView("pts/lisenceeBilling/fileUpload", "model", model);
 
 		String division = model.getDivision();
-		String billCycle = model.getMetercycle();
+		String billCycle = model.getBillCycle();
 		String province = model.getProvince();
 
 		String zipSavePath = PathMMS.getReportPath() + File.separator + billCycle + File.separator + division + File.separator + province;
@@ -259,6 +263,12 @@ public class PTSController {
 						continue;
 					}
 
+					// ✅ Check if file already exists in database
+					if (isFileAlreadyUploaded(billCycle, division, province, originalFilename)) {
+						processingResults.append("File already uploaded: ").append(originalFilename).append(" - Skipping.\n");
+						continue;
+					}
+
 					// Save ZIP file (directories are already created at this point)
 					File zipFile = new File(zipDir, originalFilename);
 					file.transferTo(zipFile);
@@ -268,10 +278,54 @@ public class PTSController {
 					ZipExtractor.unzip(zipFile.getAbsolutePath(), extractionPath);
 					processingResults.append("Extracted into: ").append(extractionPath).append("\n");
 
+					System.out.println("====================enter to the save method================ ");
+					// ✅ Save metadata to database
+					//saveFileUploadHeader(request, billCycle, division, province, originalFilename);
+
+						try {
+							// Create the composite primary key
+							FileUploadHeaderId headerId = new FileUploadHeaderId();
+							headerId.setBillCycleNo(Long.parseLong(billCycle));
+							headerId.setLicensee(division);
+							headerId.setProvince(province);
+
+							// Create the main entity
+							FileUploadHeader header = new FileUploadHeader();
+							header.setId(headerId);
+							header.setFileName(originalFilename);
+							header.setIsUploaded(1L); // 1 = uploaded successfully
+							header.setUploadedBy(getUserName(request));
+							header.setUploadedDate(LocalDate.now());
+							header.setFileType("ZIP");
+
+							// ✅ Save using DAO
+							fileUploadHeaderDao.save(header);
+
+
+
+							System.out.println("File metadata saved successfully for: " + originalFilename);
+
+						} catch (NumberFormatException e) {
+							throw new RuntimeException("Invalid bill cycle number: " + billCycle, e);
+						} catch (Exception e) {
+						//	throw new RuntimeException("Failed to save file metadata: " + e.getMessage(), e);
+
+							e.printStackTrace();
+						}
+						System.out.println("=========================Successfully=============================");
+
+
+
+					System.out.println("**************terminate the save method****************** ");
+					processingResults.append("File metadata saved to database for: ").append(originalFilename).append("\n");
+
 					filesProcessed = true;
 
 				} catch (IOException e) {
 					processingResults.append("Error processing file: ").append(file.getOriginalFilename()).append(" - ").append(e.getMessage()).append("\n");
+					e.printStackTrace();
+				} catch (Exception e) {
+					processingResults.append("Database error for file: ").append(file.getOriginalFilename()).append(" - ").append(e.getMessage()).append("\n");
 					e.printStackTrace();
 				}
 			}
@@ -286,11 +340,48 @@ public class PTSController {
 		// Repopulate dropdowns
 		List<DistributionLicense> licenseList = DistributionLicenseDao.getLicenseList();
 		List<Province> provinceList = provinceDao.getAllProvince();
-		model.setdivisionList(licenseList);
+		model.setLicenseList(licenseList);
 		model.setProvinceList(provinceList);
 		mo.addObject("provinceList", new ObjectMapper().writeValueAsString(modelService.getAllProvinces(provinceList)));
 
 		return mo;
+	}
+
+
+
+	/**
+	 * Check if file is already uploaded to prevent duplicates
+	 */
+
+	public boolean isFileAlreadyUploaded(String billCycle, String division, String province, String fileName) {
+		try {
+			// ✅ Use DAO to check for existing file
+			FileUploadHeader existingHeader = fileUploadHeaderDao.findByCompositeKeyAndFileName(
+					Long.parseLong(billCycle), division, province, fileName);
+
+			return existingHeader != null;
+
+		} catch (Exception e) {
+			System.err.println("Error checking for existing file: " + e.getMessage());
+			return false; // If error checking, allow upload to proceed
+		}
+	}
+
+	/**
+	 * Get username from request, with fallback to default
+	 */
+
+	public String getUserName(HttpServletRequest request) {
+		try {
+			if (request.getUserPrincipal() != null) {
+				String username = request.getUserPrincipal().getName();
+				// Ensure username fits in database column (max 15 chars)
+				return username.length() > 15 ? username.substring(0, 15) : username;
+			}
+		} catch (Exception e) {
+			System.err.println("Error getting username: " + e.getMessage());
+		}
+		return "system"; // Default fallback
 	}
 
 
