@@ -4,6 +4,7 @@
     <option name="state">
       <map>
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/pts/common/fileUploadSelector.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/pts/common" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/pts/viewUploadfile.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/pts" />
       </map>
     </option>
   </component>

@@ -1,18 +1,17 @@
 package com.it.ceb.pts.repo;
 
 import com.it.ceb.pts.domain.FileUploadHeader;
-import com.it.ceb.pts.domain.FileUploadHeaderId;
 
 import java.util.List;
 
 public interface FileUploadHeaderDao {
     void save(FileUploadHeader header) throws Exception;
 
-    void update(FileUploadHeader header);
+    void update(FileUploadHeader header) throws Exception;
 
-    FileUploadHeader findById(FileUploadHeaderId id);
+    FileUploadHeader findById(Long uploadId);
 
-    boolean exists(FileUploadHeaderId id);
+    boolean exists(Long uploadId);
 
     List<FileUploadHeader> findByBillCycleAndLicenseeAndProvince(
             Long billCycle, String licensee, String province);
@@ -22,7 +21,11 @@ public interface FileUploadHeaderDao {
 
     Long countUploadedFiles(Long billCycle, String licensee, String province);
 
-    void delete(FileUploadHeaderId id);
+    void delete(Long uploadId) throws Exception;
 
     List<FileUploadHeader> findByBillCycle(Long billCycle);
+
+    public long countFilesByBillCycleAndProvinceAndLicense(Long billCycle, String licenseCode, String provinceCode);
+
+   // public Long generateNextUploadId() throws Exception;
 }

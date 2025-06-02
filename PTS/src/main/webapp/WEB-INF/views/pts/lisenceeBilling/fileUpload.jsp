@@ -366,6 +366,26 @@
                 box-shadow: 0 0 10px rgba(0,0,0,0.1);
             }
 
+            #successMsg {
+                display: none;
+                color: green;
+                background-color: #e6ffe6;
+                border: 1px solid green;
+                padding: 10px;
+                margin-top: 10px;
+                border-radius: 4px;
+            }
+
+            #errorMsg {
+                display: none;
+                color: red;
+                background-color: #ffe6e6;
+                border: 1px solid red;
+                padding: 10px;
+                margin-top: 10px;
+                border-radius: 4px;
+            }
+
         }
     </style>
 
@@ -390,12 +410,38 @@
     <jsp:param name="btnName" value="Process" />
 </jsp:include>
 
+<input type="hidden" name="overwrite" id="overwriteFlag" value="false"/>
 
-<!-- Success message box -->
-<div id="successMsg" class="alert alert-success" style="display: none;"></div>
+<%--<!-- Success message box -->--%>
+<%--<div id="successMsg" class="alert alert-success" style="display: none;"></div>--%>
 
-<!-- Error message box -->
-<div id="errorMsg" class="alert alert-danger" style="display: none;"></div>
+<%--<!-- Error message box -->--%>
+<%--<div id="errorMsg" class="alert alert-danger" style="display: none;"></div>--%>
+
+<!-- Message containers (put these inside your body where you want messages shown) -->
+<%--<div id="successMsg"></div>--%>
+<%--<div id="errorMsg"></div>--%>
+
+<div id="errorMsg" style="
+                display: none;
+                color: red;
+                background-color: #ffe6e6;
+                border: 1px solid red;
+                padding: 10px;
+                margin-top: 20px;"></div>
+
+<div id="successMsg" style="
+                display:none;
+                font-weight: bold;
+                color: green;
+                background-color: #e6ffe6;
+                border: 1px solid green;
+                padding: 10px;
+                margin-top: 20px ;"></div>
+
+
+<%--<!-- Success message box -->--%>
+<%--<div id="successMsg" class="alert alert-success" style="display: none;"></div>--%>
 
 <!-- to give a gap to hide the footer -->
 <span id="spanItem" style="min-height: 500px; display: inline-block;"></span>
@@ -432,36 +478,78 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
 <script src="js/main.js"></script>
 
-<script>
+<%--<script>--%>
 
-    $(document).ready(function() {
+<%--    $(document).ready(function() {--%>
 
 
-    });
-</script>
+<%--    });--%>
+<%--</script>--%>
 
-<c:if test="${not empty msg}">
+<!-- Success Message Script -->
+<c:if test="${not empty model.successMessage}">
     <script>
         $(document).ready(function () {
-            var msg = `<c:out value="${msg}" escapeXml="true" />`;
+            var msg = `<c:out value="${model.successMessage}" escapeXml="true" />`;
             var formattedMsg = msg.replace(/\n/g, "<br>");
-
-            console.log("alert messege   "+ msg);
-
-            if (msg.startsWith("Files processed successfully")) {
-                $('#successMsg').html(formattedMsg).fadeIn();
-                setTimeout(() => $('#successMsg').fadeOut(), 7000);
-            } else if (msg.startsWith("No files were processed")) {
-                $('#errorMsg').html(formattedMsg).fadeIn();
-                setTimeout(() => $('#errorMsg').fadeOut(), 7000);
-            } else {
-                // default fallback (if needed)
-                $('#errorMsg').html(formattedMsg).fadeIn();
-            }
+            console.log("Alert message in JSP (success): " + msg);
+            $('#successMsg').html(formattedMsg).fadeIn();
+            setTimeout(() => $('#successMsg').fadeOut(), 7000);
         });
     </script>
 </c:if>
 
+<!-- Error Message Script -->
+<c:if test="${not empty model.errorMessage}">
+    <script>
+        $(document).ready(function () {
+            var msg = `<c:out value="${model.errorMessage}" escapeXml="true" />`;
+            var formattedMsg = msg.replace(/\n/g, "<br>");
+            console.log("Alert message in JSP (error): " + msg);
+            $('#errorMsg').html(formattedMsg).fadeIn();
+            setTimeout(() => $('#errorMsg').fadeOut(), 7000);
+        });
+    </script>
+</c:if>
+
+<%--<c:if test="${fileNameConflict}">--%>
+<%--    <script>--%>
+<%--        $(document).ready(function () {--%>
+<%--            swal({--%>
+<%--                title: "Duplicate File Detected!",--%>
+<%--                text: "The file '${originalFileName}' is already uploaded. It has been renamed to avoid conflict.",--%>
+<%--                type: "warning",--%>
+<%--                confirmButtonText: "OK"--%>
+<%--            });--%>
+<%--        });--%>
+<%--    </script>--%>
+<%--</c:if>--%>
+<%--<c:if test="${model.fileNameConflict}">--%>
+<%--    <script type="text/javascript">--%>
+<%--        window.onload = function () {--%>
+<%--            var userConfirmed = confirm("The file '${model.originalFileName}' already exists. Do you want to overwrite it?");--%>
+<%--            if (userConfirmed) {--%>
+<%--                // Set the overwrite flag and resubmit the form--%>
+<%--                document.getElementById("overwriteFlag").value = "true";--%>
+<%--                document.forms[0].submit();--%>
+<%--            } else {--%>
+<%--                alert("Upload cancelled. Please rename your file.");--%>
+<%--            }--%>
+<%--        };--%>
+<%--    </script>--%>
+<%--</c:if>--%>
+
+<%--<c:if test="${showConfirmation}">--%>
+<%--    <script>--%>
+<%--        if (confirm("${msg}\nDo you want to proceed with uploading more files?")) {--%>
+<%--            let url = window.location.href;--%>
+<%--            url += (url.indexOf('?') > -1 ? '&' : '?') + 'confirmOverwrite=yes';--%>
+<%--            window.location.href = url;--%>
+<%--        } else {--%>
+<%--            alert("Upload canceled.");--%>
+<%--        }--%>
+<%--    </script>--%>
+<%--</c:if>--%>
 
 
 </body>

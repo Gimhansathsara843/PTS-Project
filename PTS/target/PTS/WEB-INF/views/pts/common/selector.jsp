@@ -43,7 +43,7 @@
 
                         <div>
                             <div class="ml-5 pt-3">
-                                <input type="submit" class="btn btn-primary" id="click_btn" value=${param.btnName}>
+                                <input type="submit" class="btn btn-primary" id="click_btn" value="View" onclick="viewform()">
                             </div>
                         </div>
                 </div>
@@ -89,3 +89,21 @@
         margin: 0;
     }
 </style>
+
+<script>
+    function viewform() {
+        // const billCycle = $('#billCycle').val();
+        // const division = $('#divisionDropdown').val();
+        // const province = $('#provinceDropdown').val();
+
+        console.log(`Bill Cycle: ${billCycle}, Division: ${division}, Province: ${province}`);
+
+        <%--if (!billCycle || !division || !province) {--%>
+        <%--    alert('Please fill in all fields.');--%>
+        <%--    return;--%>
+        <%--}--%>
+
+        <%--// Redirect to the view page with the selected parameters--%>
+        <%--window.location.href = `/PTS/view?billCycle=${billCycle}&division=${division}&province=${province}`;--%>
+    }
+</script>

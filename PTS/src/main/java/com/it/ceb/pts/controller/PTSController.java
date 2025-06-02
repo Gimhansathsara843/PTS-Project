@@ -2,10 +2,13 @@ package com.it.ceb.pts.controller;
 
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.math.BigDecimal;
+
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.it.ceb.pts.domain.*;
@@ -15,11 +18,13 @@ import com.it.ceb.util.common.ZipExtractor;
 import com.it.ceb.util.common.model.*;
 import com.it.ceb.pts.repo.*;
 import com.it.ceb.util.common.ExcelMeterReader;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 
+import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -119,6 +124,7 @@ public class PTSController {
 	@Transactional
 	@RequestMapping(value = "/uploadFile", method = RequestMethod.GET)
 	public ModelAndView uploadFile(@ModelAttribute("model") FileUploadModel fileUploadModel) throws Exception{
+		System.out.println("init jsp");
 		List<DistributionLicense> licenseList = DistributionLicenseDao.getLicenseList();
 		List<Province> provinceList = provinceDao.getAllProvince();
 		fileUploadModel.setLicenseList(licenseList);
@@ -198,6 +204,7 @@ public class PTSController {
 	//upload file for meter readings=============================================
 
 
+
 	@Transactional
 	@RequestMapping(value = "/UploadingMeterReadingFileS", method = RequestMethod.POST)
 	public ModelAndView uploadingMeterReadingFileS(
@@ -206,6 +213,7 @@ public class PTSController {
 			@ModelAttribute("model") FileUploadModel model,
 			BindingResult bindingResult) throws Exception {
 
+		System.out.println("submit jsp");
 		ModelAndView mo = new ModelAndView("pts/lisenceeBilling/fileUpload", "model", model);
 
 		String division = model.getDivision();
@@ -263,14 +271,36 @@ public class PTSController {
 						continue;
 					}
 
-					// ✅ Check if file already exists in database
+					//Check if file already exists in database
+//					if (isFileAlreadyUploaded(billCycle, division, province, originalFilename)) {
+//						processingResults.append("File already uploaded: ").append(originalFilename).append(" - Skipping.\n");
+//						continue;
+//					}
+
+//					// Save ZIP file (directories are already created at this point)
+//					File zipFile = new File(zipDir, originalFilename);
+//					file.transferTo(zipFile);
+//					processingResults.append("ZIP file saved to: ").append(zipFile.getAbsolutePath()).append("\n");
+//
+//					// Extract
+//					ZipExtractor.unzip(zipFile.getAbsolutePath(), extractionPath);
+
+					String uniqueFilename = originalFilename;
+
+					//Check for duplicates
 					if (isFileAlreadyUploaded(billCycle, division, province, originalFilename)) {
-						processingResults.append("File already uploaded: ").append(originalFilename).append(" - Skipping.\n");
-						continue;
+						model.setFileNameConflict(true); // Optional: use for JSP confirmation
+						model.setOriginalFileName(originalFilename);
+
+						// Generate a unique name like file.zip → file1.zip, file2.zip, etc.
+						uniqueFilename = generateUniqueFileName(originalFilename, billCycle, division, province);
+						processingResults.append("Duplicate found. File renamed to: ").append(uniqueFilename).append("\n");
+						System.out.println("+++++++++++++++++++++++++++++++" + uniqueFilename);
+						mo.addObject("msg", "Duplicate file found: " + originalFilename + ". Renamed to: " + uniqueFilename);
 					}
 
-					// Save ZIP file (directories are already created at this point)
-					File zipFile = new File(zipDir, originalFilename);
+					//Save the renamed ZIP file
+					File zipFile = new File(zipDir, uniqueFilename);
 					file.transferTo(zipFile);
 					processingResults.append("ZIP file saved to: ").append(zipFile.getAbsolutePath()).append("\n");
 
@@ -279,42 +309,38 @@ public class PTSController {
 					processingResults.append("Extracted into: ").append(extractionPath).append("\n");
 
 					System.out.println("====================enter to the save method================ ");
-					// ✅ Save metadata to database
-					//saveFileUploadHeader(request, billCycle, division, province, originalFilename);
 
 						try {
 							// Create the composite primary key
-							FileUploadHeaderId headerId = new FileUploadHeaderId();
-							headerId.setBillCycleNo(Long.parseLong(billCycle));
-							headerId.setLicensee(division);
-							headerId.setProvince(province);
-
-							// Create the main entity
 							FileUploadHeader header = new FileUploadHeader();
-							header.setId(headerId);
-							header.setFileName(originalFilename);
+							header.setBillCycleNo(Long.parseLong(billCycle));
+							header.setLicenseCode(division);
+							header.setProvinceCode(province);
+
+							header.setFileName(uniqueFilename); // Use the unique filename
 							header.setIsUploaded(1L); // 1 = uploaded successfully
 							header.setUploadedBy(getUserName(request));
 							header.setUploadedDate(LocalDate.now());
 							header.setFileType("ZIP");
-
-							// ✅ Save using DAO
+							//header.setUploadId(fileUploadHeaderDao.generateNextUploadId()); // Generate next upload ID
+							// Save using DAO
 							fileUploadHeaderDao.save(header);
 
+							System.out.println("File metadata saved successfully for: in the try catch " + originalFilename);
 
+						//	mo.addObject("msg", "File metadata saved successfully for: " + originalFilename);
 
-							System.out.println("File metadata saved successfully for: " + originalFilename);
+						//	model.setSuccessMessage("File metadata saved successfully for: " + originalFilename);
+
 
 						} catch (NumberFormatException e) {
 							throw new RuntimeException("Invalid bill cycle number: " + billCycle, e);
 						} catch (Exception e) {
 						//	throw new RuntimeException("Failed to save file metadata: " + e.getMessage(), e);
 
-							e.printStackTrace();
+							//e.printStackTrace();
 						}
 						System.out.println("=========================Successfully=============================");
-
-
 
 					System.out.println("**************terminate the save method****************** ");
 					processingResults.append("File metadata saved to database for: ").append(originalFilename).append("\n");
@@ -323,18 +349,26 @@ public class PTSController {
 
 				} catch (IOException e) {
 					processingResults.append("Error processing file: ").append(file.getOriginalFilename()).append(" - ").append(e.getMessage()).append("\n");
-					e.printStackTrace();
+					//e.printStackTrace();
 				} catch (Exception e) {
 					processingResults.append("Database error for file: ").append(file.getOriginalFilename()).append(" - ").append(e.getMessage()).append("\n");
-					e.printStackTrace();
+					//e.printStackTrace();
 				}
 			}
 		}
 
+		System.out.println("++++++++++++++++   enter to the method   +++++++++++++++");
+
 		if (filesProcessed) {
-			mo.addObject("msg", "Files processed successfully:\n" + processingResults);
+		//	mo.addObject("msg", "Files processed successfully" + processingResults);
+			model.setSuccessMessage("Files processed successfully" );
+			System.out.println(model.getSuccessMessage());
+			System.out.println("'llllllllllllllllllllllllllllllllllljjjjjjjjj");
 		} else {
-			mo.addObject("msg", "No files were processed:\n" + processingResults);
+			//mo.addObject("msg", "No files were processed" + processingResults);
+			model.setErrorMessage("No files were processed: " + processingResults);
+			System.out.println(model.getErrorMessage());
+			System.out.println("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");
 		}
 
 		// Repopulate dropdowns
@@ -344,18 +378,37 @@ public class PTSController {
 		model.setProvinceList(provinceList);
 		mo.addObject("provinceList", new ObjectMapper().writeValueAsString(modelService.getAllProvinces(provinceList)));
 
-		return mo;
+		System.out.println("+++++++++++++++++++++++++++++++" + model.getProvinceList());
+		return mo ; // Return the same page after form submission
 	}
 
+	// Add this method in your controller or service
+	private String generateUniqueFileName(String baseName, String billCycle, String division, String province) {
+		String nameWithoutExt = baseName;
+		String extension = "";
 
+		int dotIndex = baseName.lastIndexOf('.');
+		if (dotIndex > 0) {
+			nameWithoutExt = baseName.substring(0, dotIndex);
+			extension = baseName.substring(dotIndex); // includes the dot
+		}
 
+		String candidate = baseName;
+		int counter = 1;
+		while (isFileAlreadyUploaded(billCycle, division, province, candidate)) {
+			candidate = nameWithoutExt + counter + extension;
+			counter++;
+		}
+
+		return candidate;
+	}
 	/**
 	 * Check if file is already uploaded to prevent duplicates
 	 */
 
 	public boolean isFileAlreadyUploaded(String billCycle, String division, String province, String fileName) {
 		try {
-			// ✅ Use DAO to check for existing file
+			// Use DAO to check for existing file
 			FileUploadHeader existingHeader = fileUploadHeaderDao.findByCompositeKeyAndFileName(
 					Long.parseLong(billCycle), division, province, fileName);
 
@@ -390,8 +443,59 @@ public class PTSController {
 	@RequestMapping(value = "/getBillCycle", method = RequestMethod.GET, produces = "text/plain")
 	public @ResponseBody String getBillCycle() throws Exception {
 		Long billCycle = meterProcessDao.getCurrentBillCycleNo();
-		return billCycle.toString(); // ✅ returns "436" instead of <Long>436</Long>
+		return billCycle.toString(); // returns "436" instead of <Long>436</Long>
 	}
+
+//	@RequestMapping(value = "/getUploadedFiles", method = RequestMethod.GET)
+//	@ResponseBody
+//	public List<String> getUploadedFiles(@RequestParam("billCycle") String billCycle,
+//										 @RequestParam("division") String division,
+//										 @RequestParam("province") String province) {
+//
+//		String fileDirectory = PathMMS.getReportPath() + File.separator + billCycle + File.separator + division + File.separator + province;
+//		File dir = new File(fileDirectory);
+//
+//		List<String> fileNames = new ArrayList<>();
+//		if (dir.exists() && dir.isDirectory()) {
+//			File[] files = dir.listFiles();
+//			if (files != null) {
+//				for (File file : files) {
+//					if (file.isFile()) {
+//						fileNames.add(file.getName());
+//					}
+//				}
+//			}
+//		}
+//
+//		System.out.println("return the get upload files method ");
+//		return fileNames;
+//	}
+//
+//	@RequestMapping(value = "/downloadFile", method = RequestMethod.GET)
+//	public void downloadFile(@RequestParam("fileName") String fileName,
+//							 @RequestParam("billCycle") String billCycle,
+//							 @RequestParam("division") String division,
+//							 @RequestParam("province") String province,
+//							 HttpServletResponse response) throws IOException {
+//
+//		String filePath = PathMMS.getReportPath() + File.separator + billCycle + File.separator + division + File.separator + province + File.separator + fileName;
+//		File file = new File(filePath);
+//
+//		if (file.exists()) {
+//			response.setContentType("application/octet-stream");
+//			response.setHeader("Content-Disposition", "attachment;filename=\"" + file.getName() + "\"");
+//
+//			FileInputStream fis = new FileInputStream(file);
+//			IOUtils.copy(fis, response.getOutputStream());
+//			response.flushBuffer();
+//			fis.close();
+//		} else {
+//			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+//		}
+//
+//		System.out.println("return the download file method ");
+//	}
+
 
 
 

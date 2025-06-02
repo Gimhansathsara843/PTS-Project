@@ -5,7 +5,6 @@ com\it\ceb\pts\domain\MeasureCellId.class
 com\it\ceb\pts\domain\MeterReadingErrLog.class
 com\it\ceb\util\common\model\MeterReadingRecordModel.class
 com\it\ceb\util\common\MailMail.class
-com\it\ceb\pts\domain\FileUploadHeaderId.class
 com\it\ceb\pts\repo\MeterProcessDao.class
 com\it\ceb\pts\repo\FileUploadDao.class
 com\it\ceb\util\common\exceptions\CorruptedFileException.class

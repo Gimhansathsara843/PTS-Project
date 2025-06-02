@@ -50,6 +50,41 @@ public class FileUploadModel {
 
 
 
+	private boolean fileNameConflict;
+	private String originalFileName;
+
+	public String successMessage;
+
+	public String getSuccessMessage() {
+		return successMessage;
+	}
+	public void setSuccessMessage(String successMessage) {
+		this.successMessage = successMessage;
+	}
+	public String errorMessage;
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
+
+	public boolean isFileNameConflict() {
+		return fileNameConflict;
+	}
+
+	public void setFileNameConflict(boolean fileNameConflict) {
+		this.fileNameConflict = fileNameConflict;
+	}
+
+	public String getOriginalFileName() {
+		return originalFileName;
+	}
+
+	public void setOriginalFileName(String originalFileName) {
+		this.originalFileName = originalFileName;
+	}
 
 
 	public String filetype;
@@ -123,6 +158,10 @@ public class FileUploadModel {
 	public void setBillCycle(String billCycle) {
 		this.billCycle = billCycle;
 	}
+
+
+
+
 	
   
 

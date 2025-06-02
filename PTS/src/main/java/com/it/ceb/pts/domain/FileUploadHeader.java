@@ -1,9 +1,6 @@
 package com.it.ceb.pts.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,8 +12,12 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "FILE_UPLOAD_HEADER")
 public class FileUploadHeader {
-    @EmbeddedId
-    private FileUploadHeaderId id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "FileUploadSeqGen")
+    @SequenceGenerator(name = "FileUploadSeqGen", sequenceName = "FILE_UPLOAD_HEADER_SEQ", allocationSize = 1)
+    @Column(name = "UPLOAD_ID", nullable = false)
+    private Long uploadId;
 
     @Size(max = 200)
     @Column(name = "FILE_NAME", length = 200)
@@ -36,4 +37,14 @@ public class FileUploadHeader {
     @Column(name = "FILE_TYPE", length = 20)
     private String fileType;
 
+    @Column(name = "BILL_CYCLE_NO", nullable = false)
+    private Long billCycleNo;
+
+    @Size(max = 100)
+    @Column(name = "LICENSE_CODE", nullable = false, length = 100)
+    private String licenseCode;
+
+    @Size(max = 50)
+    @Column(name = "PROVINCE_CODE", nullable = false, length = 50)
+    private String provinceCode;
 }

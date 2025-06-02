@@ -352,6 +352,22 @@
                 font-size: 0.8em;
             }
         }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid #3498db;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
     </style>
 
 </head>
@@ -374,6 +390,14 @@
 <jsp:include page="../common/selector.jsp">
     <jsp:param name="btnName" value="View" />
 </jsp:include>
+
+
+
+<div id="tableContainer" class="container"></div>
+
+
+
+
 
 <!-- to give a gap to hide the footer -->
 <span id="spanItem" style="min-height: 500px; display: inline-block;"></span>
@@ -444,6 +468,73 @@
         filterProvince('DD1');//initial rendering
     });
 </script>
+<script>
+    $(document).ready(function () {
+        // Ensure the click handler is not duplicated
+        $('#click_btn').off('click').on('click', function (e) {
+            e.preventDefault();
+
+            const licenseCode = $('#divisionDropdown').val();
+            const provinceCode = $('#provinceDropdown').val();
+            const billCycle = $('#billCycle').val();
+
+            if (!licenseCode || !provinceCode || !billCycle) {
+                swal("Warning", "Please select Bill Cycle, Division, and Province", "warning");
+                return;
+            }
+
+            console.log(`Bill Cycle: ${billCycle}, Division: ${licenlicenseCode}, Province: ${provinceCode}`);
+
+            $('#tableContainer').html('<div class="spinner"></div>');
+
+            // Simulate AJAX or replace with real fetch
+            <%--$.ajax({--%>
+            <%--    url: '/getUploadedFiles',--%>
+            <%--    method: 'GET',--%>
+            <%--    data: {--%>
+            <%--        billCycle: billCycle,--%>
+            <%--        division: licenseCode,--%>
+            <%--        province: provinceCode--%>
+            <%--    },--%>
+            <%--    success: function (fileList) {--%>
+            <%--        if (fileList.length === 0) {--%>
+            <%--            $('#tableContainer').html('<p>No files found.</p>');--%>
+            <%--            return;--%>
+            <%--        }--%>
+
+            <%--        let table = `<table class="table table-bordered mt-3">--%>
+            <%--            <thead class="thead-dark">--%>
+            <%--                <tr>--%>
+            <%--                    <th>File Name</th>--%>
+            <%--                    <th>Download</th>--%>
+            <%--                </tr>--%>
+            <%--            </thead>--%>
+            <%--            <tbody>`;--%>
+            <%--        fileList.forEach(function (fileName) {--%>
+            <%--            table += `<tr>--%>
+            <%--            <td>${fileName}</td>--%>
+            <%--            <td>--%>
+            <%--                <a href="/downloadFile?fileName=${encodeURIComponent(fileName)}&billCycle=${billCycle}&division=${licenseCode}&province=${provinceCode}"--%>
+            <%--                   class="btn btn-sm btn-success" target="_blank">Download</a>--%>
+            <%--            </td>--%>
+            <%--        </tr>`;--%>
+            <%--        });--%>
+            <%--        table += '</tbody></table>';--%>
+
+            <%--        $('#tableContainer').html(table);--%>
+            <%--    },--%>
+            <%--    error: function () {--%>
+            <%--        swal("Error", "Failed to fetch files from server", "error");--%>
+            <%--        $('#tableContainer').html('');--%>
+            <%--    }--%>
+            <%--});--%>
+
+        });
+    });
+</script>
+
+
+
 
 </body>
 

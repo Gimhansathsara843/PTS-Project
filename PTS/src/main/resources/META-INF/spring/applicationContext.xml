@@ -20,6 +20,7 @@
 	<tx:annotation-driven />
 
 	<bean id="excelMeterReader" class="com.it.ceb.util.common.ExcelMeterReader" scope="prototype"/>
+
 </beans>
 
 
