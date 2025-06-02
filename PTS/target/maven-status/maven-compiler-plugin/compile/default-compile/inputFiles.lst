@@ -77,6 +77,7 @@ E:\Github\PTS-Project\PTS\src\main\java\com\it\ceb\pts\domain\MeterModel.java
 E:\Github\PTS-Project\PTS\src\main\java\com\it\ceb\util\common\CheckDigit.java
 E:\Github\PTS-Project\PTS\src\main\java\com\it\ceb\pts\domain\MeterReading.java
 E:\Github\PTS-Project\PTS\src\main\java\com\it\ceb\pts\domain\MeterReadingEnergySummary.java
+E:\Github\PTS-Project\PTS\src\main\java\com\it\ceb\pts\controller\FileController.java
 E:\Github\PTS-Project\PTS\src\main\java\com\it\ceb\pts\domain\BillCycle.java
 E:\Github\PTS-Project\PTS\src\main\java\com\it\ceb\pts\domain\MeterHeader.java
 E:\Github\PTS-Project\PTS\src\main\java\com\it\ceb\pts\repo\ProvinceDao.java

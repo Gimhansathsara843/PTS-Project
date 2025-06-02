@@ -204,247 +204,247 @@ public class PTSController {
 	//upload file for meter readings=============================================
 
 
-
-	@Transactional
-	@RequestMapping(value = "/UploadingMeterReadingFileS", method = RequestMethod.POST)
-	public ModelAndView uploadingMeterReadingFileS(
-			HttpServletRequest request,
-			@RequestParam("files") MultipartFile[] files,
-			@ModelAttribute("model") FileUploadModel model,
-			BindingResult bindingResult) throws Exception {
-
-		System.out.println("submit jsp");
-		ModelAndView mo = new ModelAndView("pts/lisenceeBilling/fileUpload", "model", model);
-
-		String division = model.getDivision();
-		String billCycle = model.getBillCycle();
-		String province = model.getProvince();
-
-		String zipSavePath = PathMMS.getReportPath() + File.separator + billCycle + File.separator + division + File.separator + province;
-		String extractionPath = PathMMS.getReportPath() + File.separator + billCycle + File.separator + division;
-
-		boolean filesProcessed = false;
-		StringBuilder processingResults = new StringBuilder();
-		boolean hasValidZipFiles = false;
-
-		// First, check if there are any valid ZIP files
-		for (MultipartFile file : files) {
-			if (!file.isEmpty()) {
-				String originalFilename = file.getOriginalFilename();
-				if (originalFilename != null && !originalFilename.trim().isEmpty() &&
-						originalFilename.toLowerCase().endsWith(".zip")) {
-					hasValidZipFiles = true;
-					break;
-				}
-			}
-		}
-
-		// Only create directories if there are valid ZIP files
-		File zipDir = null;
-		File extractDir = null;
-
-		if (hasValidZipFiles) {
-			zipDir = new File(zipSavePath);
-			if (!zipDir.exists() && !zipDir.mkdirs()) {
-				mo.addObject("msg", "Failed to create ZIP directory: " + zipSavePath);
-				return mo;
-			}
-
-			extractDir = new File(extractionPath);
-			if (!extractDir.exists() && !extractDir.mkdirs()) {
-				mo.addObject("msg", "Failed to create extraction directory: " + extractionPath);
-				return mo;
-			}
-		}
-
-		for (MultipartFile file : files) {
-			if (!file.isEmpty()) {
-				try {
-					String originalFilename = file.getOriginalFilename();
-					if (originalFilename == null || originalFilename.trim().isEmpty()) {
-						processingResults.append("File has no name. Skipping.\n");
-						continue;
-					}
-
-					if (!originalFilename.toLowerCase().endsWith(".zip")) {
-						processingResults.append("Invalid file type for: ").append(originalFilename).append(". Only ZIP files are allowed.\n");
-						continue;
-					}
-
-					//Check if file already exists in database
-//					if (isFileAlreadyUploaded(billCycle, division, province, originalFilename)) {
-//						processingResults.append("File already uploaded: ").append(originalFilename).append(" - Skipping.\n");
+//
+//	@Transactional
+//	@RequestMapping(value = "/UploadingMeterReadingFileS", method = RequestMethod.POST)
+//	public ModelAndView uploadingMeterReadingFileS(
+//			HttpServletRequest request,
+//			@RequestParam("files") MultipartFile[] files,
+//			@ModelAttribute("model") FileUploadModel model,
+//			BindingResult bindingResult) throws Exception {
+//
+//		System.out.println("submit jsp");
+//		ModelAndView mo = new ModelAndView("pts/lisenceeBilling/fileUpload", "model", model);
+//
+//		String division = model.getDivision();
+//		String billCycle = model.getBillCycle();
+//		String province = model.getProvince();
+//
+//		String zipSavePath = PathMMS.getReportPath() + File.separator + billCycle + File.separator + division + File.separator + province;
+//		String extractionPath = PathMMS.getReportPath() + File.separator + billCycle + File.separator + division;
+//
+//		boolean filesProcessed = false;
+//		StringBuilder processingResults = new StringBuilder();
+//		boolean hasValidZipFiles = false;
+//
+//		// First, check if there are any valid ZIP files
+//		for (MultipartFile file : files) {
+//			if (!file.isEmpty()) {
+//				String originalFilename = file.getOriginalFilename();
+//				if (originalFilename != null && !originalFilename.trim().isEmpty() &&
+//						originalFilename.toLowerCase().endsWith(".zip")) {
+//					hasValidZipFiles = true;
+//					break;
+//				}
+//			}
+//		}
+//
+//		// Only create directories if there are valid ZIP files
+//		File zipDir = null;
+//		File extractDir = null;
+//
+//		if (hasValidZipFiles) {
+//			zipDir = new File(zipSavePath);
+//			if (!zipDir.exists() && !zipDir.mkdirs()) {
+//				mo.addObject("msg", "Failed to create ZIP directory: " + zipSavePath);
+//				return mo;
+//			}
+//
+//			extractDir = new File(extractionPath);
+//			if (!extractDir.exists() && !extractDir.mkdirs()) {
+//				mo.addObject("msg", "Failed to create extraction directory: " + extractionPath);
+//				return mo;
+//			}
+//		}
+//
+//		for (MultipartFile file : files) {
+//			if (!file.isEmpty()) {
+//				try {
+//					String originalFilename = file.getOriginalFilename();
+//					if (originalFilename == null || originalFilename.trim().isEmpty()) {
+//						processingResults.append("File has no name. Skipping.\n");
 //						continue;
 //					}
-
-//					// Save ZIP file (directories are already created at this point)
-//					File zipFile = new File(zipDir, originalFilename);
+//
+//					if (!originalFilename.toLowerCase().endsWith(".zip")) {
+//						processingResults.append("Invalid file type for: ").append(originalFilename).append(". Only ZIP files are allowed.\n");
+//						continue;
+//					}
+//
+//					//Check if file already exists in database
+////					if (isFileAlreadyUploaded(billCycle, division, province, originalFilename)) {
+////						processingResults.append("File already uploaded: ").append(originalFilename).append(" - Skipping.\n");
+////						continue;
+////					}
+//
+////					// Save ZIP file (directories are already created at this point)
+////					File zipFile = new File(zipDir, originalFilename);
+////					file.transferTo(zipFile);
+////					processingResults.append("ZIP file saved to: ").append(zipFile.getAbsolutePath()).append("\n");
+////
+////					// Extract
+////					ZipExtractor.unzip(zipFile.getAbsolutePath(), extractionPath);
+//
+//					String uniqueFilename = originalFilename;
+//
+//					//Check for duplicates
+//					if (isFileAlreadyUploaded(billCycle, division, province, originalFilename)) {
+//						model.setFileNameConflict(true); // Optional: use for JSP confirmation
+//						model.setOriginalFileName(originalFilename);
+//
+//						// Generate a unique name like file.zip → file1.zip, file2.zip, etc.
+//						uniqueFilename = generateUniqueFileName(originalFilename, billCycle, division, province);
+//						processingResults.append("Duplicate found. File renamed to: ").append(uniqueFilename).append("\n");
+//						System.out.println("+++++++++++++++++++++++++++++++" + uniqueFilename);
+//						mo.addObject("msg", "Duplicate file found: " + originalFilename + ". Renamed to: " + uniqueFilename);
+//					}
+//
+//					//Save the renamed ZIP file
+//					File zipFile = new File(zipDir, uniqueFilename);
 //					file.transferTo(zipFile);
 //					processingResults.append("ZIP file saved to: ").append(zipFile.getAbsolutePath()).append("\n");
 //
 //					// Extract
 //					ZipExtractor.unzip(zipFile.getAbsolutePath(), extractionPath);
-
-					String uniqueFilename = originalFilename;
-
-					//Check for duplicates
-					if (isFileAlreadyUploaded(billCycle, division, province, originalFilename)) {
-						model.setFileNameConflict(true); // Optional: use for JSP confirmation
-						model.setOriginalFileName(originalFilename);
-
-						// Generate a unique name like file.zip → file1.zip, file2.zip, etc.
-						uniqueFilename = generateUniqueFileName(originalFilename, billCycle, division, province);
-						processingResults.append("Duplicate found. File renamed to: ").append(uniqueFilename).append("\n");
-						System.out.println("+++++++++++++++++++++++++++++++" + uniqueFilename);
-						mo.addObject("msg", "Duplicate file found: " + originalFilename + ". Renamed to: " + uniqueFilename);
-					}
-
-					//Save the renamed ZIP file
-					File zipFile = new File(zipDir, uniqueFilename);
-					file.transferTo(zipFile);
-					processingResults.append("ZIP file saved to: ").append(zipFile.getAbsolutePath()).append("\n");
-
-					// Extract
-					ZipExtractor.unzip(zipFile.getAbsolutePath(), extractionPath);
-					processingResults.append("Extracted into: ").append(extractionPath).append("\n");
-
-					System.out.println("====================enter to the save method================ ");
-
-						try {
-							// Create the composite primary key
-							FileUploadHeader header = new FileUploadHeader();
-							header.setBillCycleNo(Long.parseLong(billCycle));
-							header.setLicenseCode(division);
-							header.setProvinceCode(province);
-
-							header.setFileName(uniqueFilename); // Use the unique filename
-							header.setIsUploaded(1L); // 1 = uploaded successfully
-							header.setUploadedBy(getUserName(request));
-							header.setUploadedDate(LocalDate.now());
-							header.setFileType("ZIP");
-							//header.setUploadId(fileUploadHeaderDao.generateNextUploadId()); // Generate next upload ID
-							// Save using DAO
-							fileUploadHeaderDao.save(header);
-
-							System.out.println("File metadata saved successfully for: in the try catch " + originalFilename);
-
-						//	mo.addObject("msg", "File metadata saved successfully for: " + originalFilename);
-
-						//	model.setSuccessMessage("File metadata saved successfully for: " + originalFilename);
-
-
-						} catch (NumberFormatException e) {
-							throw new RuntimeException("Invalid bill cycle number: " + billCycle, e);
-						} catch (Exception e) {
-						//	throw new RuntimeException("Failed to save file metadata: " + e.getMessage(), e);
-
-							//e.printStackTrace();
-						}
-						System.out.println("=========================Successfully=============================");
-
-					System.out.println("**************terminate the save method****************** ");
-					processingResults.append("File metadata saved to database for: ").append(originalFilename).append("\n");
-
-					filesProcessed = true;
-
-				} catch (IOException e) {
-					processingResults.append("Error processing file: ").append(file.getOriginalFilename()).append(" - ").append(e.getMessage()).append("\n");
-					//e.printStackTrace();
-				} catch (Exception e) {
-					processingResults.append("Database error for file: ").append(file.getOriginalFilename()).append(" - ").append(e.getMessage()).append("\n");
-					//e.printStackTrace();
-				}
-			}
-		}
-
-		System.out.println("++++++++++++++++   enter to the method   +++++++++++++++");
-
-		if (filesProcessed) {
-		//	mo.addObject("msg", "Files processed successfully" + processingResults);
-			model.setSuccessMessage("Files processed successfully" );
-			System.out.println(model.getSuccessMessage());
-			System.out.println("'llllllllllllllllllllllllllllllllllljjjjjjjjj");
-		} else {
-			//mo.addObject("msg", "No files were processed" + processingResults);
-			model.setErrorMessage("No files were processed: " + processingResults);
-			System.out.println(model.getErrorMessage());
-			System.out.println("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");
-		}
-
-		// Repopulate dropdowns
-		List<DistributionLicense> licenseList = DistributionLicenseDao.getLicenseList();
-		List<Province> provinceList = provinceDao.getAllProvince();
-		model.setLicenseList(licenseList);
-		model.setProvinceList(provinceList);
-		mo.addObject("provinceList", new ObjectMapper().writeValueAsString(modelService.getAllProvinces(provinceList)));
-
-		System.out.println("+++++++++++++++++++++++++++++++" + model.getProvinceList());
-		return mo ; // Return the same page after form submission
-	}
-
-	// Add this method in your controller or service
-	private String generateUniqueFileName(String baseName, String billCycle, String division, String province) {
-		String nameWithoutExt = baseName;
-		String extension = "";
-
-		int dotIndex = baseName.lastIndexOf('.');
-		if (dotIndex > 0) {
-			nameWithoutExt = baseName.substring(0, dotIndex);
-			extension = baseName.substring(dotIndex); // includes the dot
-		}
-
-		String candidate = baseName;
-		int counter = 1;
-		while (isFileAlreadyUploaded(billCycle, division, province, candidate)) {
-			candidate = nameWithoutExt + counter + extension;
-			counter++;
-		}
-
-		return candidate;
-	}
-	/**
-	 * Check if file is already uploaded to prevent duplicates
-	 */
-
-	public boolean isFileAlreadyUploaded(String billCycle, String division, String province, String fileName) {
-		try {
-			// Use DAO to check for existing file
-			FileUploadHeader existingHeader = fileUploadHeaderDao.findByCompositeKeyAndFileName(
-					Long.parseLong(billCycle), division, province, fileName);
-
-			return existingHeader != null;
-
-		} catch (Exception e) {
-			System.err.println("Error checking for existing file: " + e.getMessage());
-			return false; // If error checking, allow upload to proceed
-		}
-	}
-
-	/**
-	 * Get username from request, with fallback to default
-	 */
-
-	public String getUserName(HttpServletRequest request) {
-		try {
-			if (request.getUserPrincipal() != null) {
-				String username = request.getUserPrincipal().getName();
-				// Ensure username fits in database column (max 15 chars)
-				return username.length() > 15 ? username.substring(0, 15) : username;
-			}
-		} catch (Exception e) {
-			System.err.println("Error getting username: " + e.getMessage());
-		}
-		return "system"; // Default fallback
-	}
-
-
-	//send the bill cycle
-	@Transactional
-	@RequestMapping(value = "/getBillCycle", method = RequestMethod.GET, produces = "text/plain")
-	public @ResponseBody String getBillCycle() throws Exception {
-		Long billCycle = meterProcessDao.getCurrentBillCycleNo();
-		return billCycle.toString(); // returns "436" instead of <Long>436</Long>
-	}
+//					processingResults.append("Extracted into: ").append(extractionPath).append("\n");
+//
+//					System.out.println("====================enter to the save method================ ");
+//
+//						try {
+//							// Create the composite primary key
+//							FileUploadHeader header = new FileUploadHeader();
+//							header.setBillCycleNo(Long.parseLong(billCycle));
+//							header.setLicenseCode(division);
+//							header.setProvinceCode(province);
+//
+//							header.setFileName(uniqueFilename); // Use the unique filename
+//							header.setIsUploaded(1L); // 1 = uploaded successfully
+//							header.setUploadedBy(getUserName(request));
+//							header.setUploadedDate(LocalDate.now());
+//							header.setFileType("ZIP");
+//							//header.setUploadId(fileUploadHeaderDao.generateNextUploadId()); // Generate next upload ID
+//							// Save using DAO
+//							fileUploadHeaderDao.save(header);
+//
+//							System.out.println("File metadata saved successfully for: in the try catch " + originalFilename);
+//
+//						//	mo.addObject("msg", "File metadata saved successfully for: " + originalFilename);
+//
+//						//	model.setSuccessMessage("File metadata saved successfully for: " + originalFilename);
+//
+//
+//						} catch (NumberFormatException e) {
+//							throw new RuntimeException("Invalid bill cycle number: " + billCycle, e);
+//						} catch (Exception e) {
+//						//	throw new RuntimeException("Failed to save file metadata: " + e.getMessage(), e);
+//
+//							//e.printStackTrace();
+//						}
+//						System.out.println("=========================Successfully=============================");
+//
+//					System.out.println("**************terminate the save method****************** ");
+//					processingResults.append("File metadata saved to database for: ").append(originalFilename).append("\n");
+//
+//					filesProcessed = true;
+//
+//				} catch (IOException e) {
+//					processingResults.append("Error processing file: ").append(file.getOriginalFilename()).append(" - ").append(e.getMessage()).append("\n");
+//					//e.printStackTrace();
+//				} catch (Exception e) {
+//					processingResults.append("Database error for file: ").append(file.getOriginalFilename()).append(" - ").append(e.getMessage()).append("\n");
+//					//e.printStackTrace();
+//				}
+//			}
+//		}
+//
+//		System.out.println("++++++++++++++++   enter to the method   +++++++++++++++");
+//
+//		if (filesProcessed) {
+//		//	mo.addObject("msg", "Files processed successfully" + processingResults);
+//			model.setSuccessMessage("Files processed successfully" );
+//			System.out.println(model.getSuccessMessage());
+//			System.out.println("'llllllllllllllllllllllllllllllllllljjjjjjjjj");
+//		} else {
+//			//mo.addObject("msg", "No files were processed" + processingResults);
+//			model.setErrorMessage("No files were processed: " + processingResults);
+//			System.out.println(model.getErrorMessage());
+//			System.out.println("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");
+//		}
+//
+//		// Repopulate dropdowns
+//		List<DistributionLicense> licenseList = DistributionLicenseDao.getLicenseList();
+//		List<Province> provinceList = provinceDao.getAllProvince();
+//		model.setLicenseList(licenseList);
+//		model.setProvinceList(provinceList);
+//		mo.addObject("provinceList", new ObjectMapper().writeValueAsString(modelService.getAllProvinces(provinceList)));
+//
+//		System.out.println("+++++++++++++++++++++++++++++++" + model.getProvinceList());
+//		return mo ; // Return the same page after form submission
+//	}
+//
+//	// Add this method in your controller or service
+//	private String generateUniqueFileName(String baseName, String billCycle, String division, String province) {
+//		String nameWithoutExt = baseName;
+//		String extension = "";
+//
+//		int dotIndex = baseName.lastIndexOf('.');
+//		if (dotIndex > 0) {
+//			nameWithoutExt = baseName.substring(0, dotIndex);
+//			extension = baseName.substring(dotIndex); // includes the dot
+//		}
+//
+//		String candidate = baseName;
+//		int counter = 1;
+//		while (isFileAlreadyUploaded(billCycle, division, province, candidate)) {
+//			candidate = nameWithoutExt + counter + extension;
+//			counter++;
+//		}
+//
+//		return candidate;
+//	}
+//	/**
+//	 * Check if file is already uploaded to prevent duplicates
+//	 */
+//
+//	public boolean isFileAlreadyUploaded(String billCycle, String division, String province, String fileName) {
+//		try {
+//			// Use DAO to check for existing file
+//			FileUploadHeader existingHeader = fileUploadHeaderDao.findByCompositeKeyAndFileName(
+//					Long.parseLong(billCycle), division, province, fileName);
+//
+//			return existingHeader != null;
+//
+//		} catch (Exception e) {
+//			System.err.println("Error checking for existing file: " + e.getMessage());
+//			return false; // If error checking, allow upload to proceed
+//		}
+//	}
+//
+//	/**
+//	 * Get username from request, with fallback to default
+//	 */
+//
+//	public String getUserName(HttpServletRequest request) {
+//		try {
+//			if (request.getUserPrincipal() != null) {
+//				String username = request.getUserPrincipal().getName();
+//				// Ensure username fits in database column (max 15 chars)
+//				return username.length() > 15 ? username.substring(0, 15) : username;
+//			}
+//		} catch (Exception e) {
+//			System.err.println("Error getting username: " + e.getMessage());
+//		}
+//		return "system"; // Default fallback
+//	}
+//
+//
+//	//send the bill cycle
+//	@Transactional
+//	@RequestMapping(value = "/getBillCycle", method = RequestMethod.GET, produces = "text/plain")
+//	public @ResponseBody String getBillCycle() throws Exception {
+//		Long billCycle = meterProcessDao.getCurrentBillCycleNo();
+//		return billCycle.toString(); // returns "436" instead of <Long>436</Long>
+//	}
 
 //	@RequestMapping(value = "/getUploadedFiles", method = RequestMethod.GET)
 //	@ResponseBody

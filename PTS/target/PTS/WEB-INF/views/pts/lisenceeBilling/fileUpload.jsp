@@ -428,8 +428,7 @@
                 background-color: #ffe6e6;
                 border: 1px solid red;
                 padding: 10px;
-                margin-top: 10px;
-                border-radius: 4px;"></div>
+                margin-top: 20px;"></div>
 
 <div id="successMsg" style="
                 display:none;
@@ -438,8 +437,7 @@
                 background-color: #e6ffe6;
                 border: 1px solid green;
                 padding: 10px;
-                margin-top: 10px;
-                border-radius: 4px;"></div>
+                margin-top: 20px ;"></div>
 
 
 <%--<!-- Success message box -->--%>

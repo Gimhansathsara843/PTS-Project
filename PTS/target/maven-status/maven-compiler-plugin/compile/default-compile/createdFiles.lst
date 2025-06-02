@@ -65,6 +65,7 @@ com\it\ceb\pts\domain\Province.class
 com\it\ceb\admin\domain\Sausrdpl.class
 com\it\ceb\pts\domain\FileUploadPK.class
 com\it\ceb\pts\domain\Transformer.class
+com\it\ceb\pts\controller\FileController.class
 com\it\ceb\admin\domain\SausrdpmPK.class
 com\it\ceb\pts\domain\MeterPointTemp.class
 com\it\ceb\pts\domain\MeterReadingEnergySummary.class
