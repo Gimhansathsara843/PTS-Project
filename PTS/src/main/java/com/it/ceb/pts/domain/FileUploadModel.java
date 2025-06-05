@@ -1,5 +1,6 @@
 package com.it.ceb.pts.domain;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -12,6 +13,16 @@ public class FileUploadModel {
 	private List<FileUpload> fileList;
 	List<DistributionLicense> licenseList;
 	List<Province> provinceList;
+
+	List<FileUploadHeader>viewFileList;
+
+	public List<FileUploadHeader> getViewFileList() {
+		return viewFileList;
+	}
+
+	public void setViewFileList(List<FileUploadHeader> viewFileList) {
+		this.viewFileList = viewFileList;
+	}
 	
 	private List<MeterReading> meterReadingList;
 	
@@ -47,6 +58,52 @@ public class FileUploadModel {
 	public void setProvinceList(List<Province> provinceList) {
 		this.provinceList = provinceList;
 	}
+
+//	                System.out.println("File Name: " + header.getFileName());
+//                System.out.println("Uploaded By: " + header.getUploadedBy());
+//                System.out.println("Uploaded Date: " + header.getUploadedDate());
+//                System.out.println("Province Code: " + header.getProvinceCode());
+//                System.out.println("File Type: " + header.getFileType());
+
+
+	private String fileName;
+	private String uploadedBy;
+	private LocalDate uploadedDate;
+	private String provinceCode;
+	private String fileType;
+
+	public String getFileName() {
+		return fileName;
+	}
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+	public String getUploadedBy() {
+		return uploadedBy;
+	}
+	public void setUploadedBy(String uploadedBy) {
+		this.uploadedBy = uploadedBy;
+	}
+	public LocalDate getUploadedDate() {
+		return uploadedDate;
+	}
+	public void setUploadedDate(LocalDate uploadedDate) {
+		this.uploadedDate = uploadedDate;
+	}
+	public String getProvinceCode() {
+		return provinceCode;
+	}
+	public void setProvinceCode(String provinceCode) {
+		this.provinceCode = provinceCode;
+	}
+public String getFileType() {
+		return fileType;
+	}
+public void setFileType(String fileType) {
+		this.fileType = fileType;
+	}
+
+
 
 
 
@@ -158,6 +215,13 @@ public class FileUploadModel {
 	public void setBillCycle(String billCycle) {
 		this.billCycle = billCycle;
 	}
+
+
+//	                System.out.println("File Name: " + header.getFileName());
+//                System.out.println("Uploaded By: " + header.getUploadedBy());
+//                System.out.println("Uploaded Date: " + header.getUploadedDate());
+//                System.out.println("Province Code: " + header.getProvinceCode());
+//                System.out.println("File Type: " + header.getFileType());
 
 
 

@@ -28,4 +28,9 @@ public interface FileUploadHeaderDao {
     public long countFilesByBillCycleAndProvinceAndLicense(Long billCycle, String licenseCode, String provinceCode);
 
    // public Long generateNextUploadId() throws Exception;
+
+    int countByBillCycleAndLicenseAndProvince(Long billCycle, String licenseCode, String provinceCode);
+
+    List<FileUploadHeader> getUploadDetails(String billCycle, String division);
+
 }

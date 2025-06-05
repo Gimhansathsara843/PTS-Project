@@ -1,5 +1,6 @@
 package com.it.ceb.pts.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -31,11 +32,12 @@ public class FileUploadHeader {
     private String uploadedBy;
 
     @Column(name = "UPLOADED_DATE")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate uploadedDate;
 
-    @Size(max = 20)
-    @Column(name = "FILE_TYPE", length = 20)
-    private String fileType;
+//    @Size(max = 20)
+//    @Column(name = "FILE_TYPE", length = 20)
+//    private String fileType;
 
     @Column(name = "BILL_CYCLE_NO", nullable = false)
     private Long billCycleNo;

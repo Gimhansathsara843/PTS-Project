@@ -367,11 +367,21 @@ public class MeterProcessDaoImpl implements MeterProcessDao {
 
     @Override
     public Long getCurrentBillCycleNo() {
-        TypedQuery<Long> query = entityManager.createQuery(
-                "SELECT b.billCycleNo FROM BillCycle b WHERE b.isCurrent = 1",
-                Long.class
-        );
-        return query.getSingleResult();
+        long currentCycle = -1;
+        try{
+            TypedQuery<Long> query = entityManager.createQuery(
+                    "SELECT b.billCycleNo FROM BillCycle b WHERE b.isCurrent = 1",
+                    Long.class
+            );
+            currentCycle = query.getSingleResult();
+        }
+        catch (Exception e) {
+            System.out.println("Error while getting current bill cycle number: " + e.getMessage());
+            e.printStackTrace();
+//            return currentCycle;
+        }
+
+        return currentCycle;
     }
 
 

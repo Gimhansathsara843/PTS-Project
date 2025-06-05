@@ -16,9 +16,16 @@ import com.it.ceb.pts.repo.ProvinceDao;
 import com.it.ceb.util.common.PathMMS;
 import com.it.ceb.util.common.ZipExtractor;
 import com.it.ceb.util.common.model.ModelService;
+import jakarta.annotation.Resource;
+import jakarta.enterprise.inject.Model;
 import jakarta.servlet.http.HttpServletRequest;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +33,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -123,7 +135,7 @@ public class FileController {
                     header.setIsUploaded(1L);
                     header.setUploadedBy(getUserName(request));
                     header.setUploadedDate(LocalDate.now());
-                    header.setFileType("ZIP");
+                  //  header.setFileType("ZIP");
 
                     fileUploadHeaderDao.save(header);
 
@@ -198,7 +210,128 @@ public class FileController {
     @Transactional
     @GetMapping(value = "/getBillCycle", produces = "text/plain")
     public @ResponseBody String getBillCycle() throws Exception {
+        System.out.println("=================getBillCycle=====================");
         Long billCycle = meterProcessDao.getCurrentBillCycleNo();
         return billCycle.toString();
     }
+
+    @GetMapping("/checkExistingUploads")
+    @ResponseBody
+    public int checkExistingUploads(@RequestParam("billCycle") String billCycle,
+                                    @RequestParam("division") String division,
+                                    @RequestParam("province") String province) {
+        return fileUploadHeaderDao.countByBillCycleAndLicenseAndProvince(
+                Long.parseLong(billCycle), division, province);
+    }
+
+//    @GetMapping("/viewUploadDetails")
+//    @ResponseBody
+//    public List<FileUploadHeader> viewUploads(@RequestParam String billCycle,
+//                                              @RequestParam String division,
+//                                              @ModelAttribute FileUploadModel model)  {
+//        System.out.println("==============enter to the method ======================");
+//        List<FileUploadHeader> uploadDetails = List.of(); // Initialize with an empty list
+//        try {
+//            // Fetch data using the DAO method
+//            uploadDetails = fileUploadHeaderDao.getUploadDetails(billCycle, division);
+//
+//
+//            // Log or process the retrieved data
+//            for (FileUploadHeader header : uploadDetails) {
+//                System.out.println("File Name: " + header.getFileName());
+//                System.out.println("Uploaded By: " + header.getUploadedBy());
+//                System.out.println("Uploaded Date: " + header.getUploadedDate());
+//                System.out.println("Province Code: " + header.getProvinceCode());
+//                System.out.println("File Type: " + header.getFileType());
+//                System.out.println("-----------------------------");
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            System.out.println("Failed to fetch data: " + e.getMessage());
+//        }
+//        System.out.println("==============exit from the method ======================");
+//        return uploadDetails;
+//    }
+
+
+    @Transactional
+    @GetMapping("/viewUploadDetails")
+    public ModelAndView viewUploads(@RequestParam("billCycle") String billCycle,
+                                    @RequestParam("division") String division) {
+        System.out.println("==============enter to the method ======================");
+        ModelAndView modelAndView = new ModelAndView("pts/lisenceeBilling/viewFile");
+
+        try {
+            List<FileUploadHeader> uploadDetails = fileUploadHeaderDao.getUploadDetails(billCycle, division);
+
+            if (!uploadDetails.isEmpty()) {
+                // Optional: Log details
+                for (FileUploadHeader upload : uploadDetails) {
+                    System.out.println("File Name: " + upload.getFileName());
+                    System.out.println("Uploaded By: " + upload.getUploadedBy());
+                    System.out.println("Uploaded Date: " + upload.getUploadedDate());
+                    System.out.println("Province Code: " + upload.getProvinceCode());
+                //    System.out.println("uploadDetails: " + uploadDetails);
+
+                    modelAndView.addObject("uploadDetails", uploadDetails);
+                    modelAndView.addObject("fileType", upload.getFileName());
+                    modelAndView.addObject("uploadedBy", upload.getUploadedBy());
+                    modelAndView.addObject("uploadedDate", upload.getUploadedDate());
+                    modelAndView.addObject("provinceCode", upload.getProvinceCode());
+                }
+           }
+
+//            modelAndView.addObject("fileName", billCycle);
+          //    modelAndView.addObject("uploadDetails", uploadDetails);
+
+
+            System.out.println("============uploadDetails size: ================ " + uploadDetails);
+
+        } catch (Exception e) {
+            System.err.println("Error occurred while fetching upload details: " + e.getMessage());
+            e.printStackTrace();
+            return new ModelAndView("errorPage", "errorMessage", "Failed to fetch upload details.");
+        }
+
+        System.out.println("==============exit from the method ======================");
+        return modelAndView;
+    }
+
+    @GetMapping("/downloadZipFile")
+    public void downloadZipFile(
+            @RequestParam("fileName") String fileName,
+            @RequestParam("billCycle") String billCycle,
+            @RequestParam("division") String division,
+            @RequestParam("province") String province,
+            HttpServletResponse response) throws IOException {
+
+        // Construct the file path
+        String filePath = PathMMS.getReportPath() + File.separator + billCycle + File.separator + division + File.separator + province + File.separator + fileName;
+        File file = new File(filePath);
+
+        // Check if the file exists
+        if (!file.exists()) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            response.getWriter().write("File not found: " + fileName);
+            return;
+        }
+
+        // Set response headers for file download
+        response.setContentType("application/zip");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+        response.setContentLengthLong(file.length());
+
+        // Write the file to the response output stream
+        try (FileInputStream fis = new FileInputStream(file);
+             OutputStream os = response.getOutputStream()) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                os.write(buffer, 0, bytesRead);
+            }
+        }
+    }
+
+
 }
+

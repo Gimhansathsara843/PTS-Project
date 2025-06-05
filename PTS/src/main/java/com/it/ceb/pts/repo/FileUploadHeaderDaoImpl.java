@@ -164,5 +164,31 @@ public class FileUploadHeaderDaoImpl implements FileUploadHeaderDao {
         return query.getSingleResult();
     }
 
+    @Override
+    public int countByBillCycleAndLicenseAndProvince(Long billCycle, String licenseCode, String provinceCode) {
+        String jpql = "SELECT COUNT(f) FROM FileUploadHeader f " +
+                "WHERE f.billCycleNo = :billCycle AND f.licenseCode = :licenseCode AND f.provinceCode = :provinceCode";
+        TypedQuery<Long> query = entityManager.createQuery(jpql, Long.class);
+        query.setParameter("billCycle", billCycle);
+        query.setParameter("licenseCode", licenseCode);
+        query.setParameter("provinceCode", provinceCode);
+        return query.getSingleResult().intValue();
+    }
+
+
+
+    @Override
+    public List<FileUploadHeader> getUploadDetails(String billCycle, String division) {
+        String jpql = "SELECT f FROM FileUploadHeader f WHERE " +
+                "f.billCycleNo = :billCycle AND f.licenseCode = :division";
+
+        TypedQuery<FileUploadHeader> query = entityManager.createQuery(jpql, FileUploadHeader.class);
+        query.setParameter("billCycle", Long.parseLong(billCycle));
+        query.setParameter("division", division);
+
+        return query.getResultList();
+    }
+
+
 }
 
