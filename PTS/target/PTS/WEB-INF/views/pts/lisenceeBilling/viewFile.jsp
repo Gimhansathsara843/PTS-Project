@@ -391,20 +391,84 @@
     <jsp:param name="btnName" value="View" />
 </jsp:include>
 
-
-
 <div id="tableContainer" class="container"></div>
+<div id="tableContainer1" class="container"></div>
+<div id="tableContainer2" class="container"></div>
+
+<%--<c:if test="${not empty uploadDetails}">--%>
+<%--    <table class="table table-bordered">--%>
+<%--        <thead>--%>
+<%--        <tr>--%>
+<%--            <th>File Name</th>--%>
+<%--            <th>Uploaded By</th>--%>
+<%--            <th>Uploaded Date</th>--%>
+<%--            <th>Province Code</th>--%>
+<%--            <th>File Type</th>--%>
+<%--        </tr>--%>
+<%--        </thead>--%>
+<%--        <tbody>--%>
+<%--        <c:forEach items="${uploadDetails}" var="file" >--%>
+<%--            <tr>--%>
+<%--                <td>${file.fileName}</td>--%>
+<%--                <td>${file.uploadedBy}</td>--%>
+<%--                <td>${file.uploadedDate}</td>--%>
+<%--                <td>${file.provinceCode}</td>--%>
+<%--                <td>${file.fileType}</td>--%>
+<%--            </tr>--%>
+<%--        </c:forEach>--%>
+<%--        </tbody>--%>
+<%--    </table>--%>
+<%--</c:if>--%>
+
+<%--<c:if test="${empty uploadDetails}">--%>
+<%--    <p>No uploads found for the selected bill cycle and division.</p>--%>
+<%--</c:if>--%>
 
 
 
+<div class="container mt-5">
+    <h2>Uploaded Files</h2>
+    <c:if test="${not empty uploadDetails}">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Province Code</th>
+                <th>Uploaded Date</th>
+                <th>Uploaded By</th>
+                <th>File Name</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <c:forEach var="file" items="${uploadDetails}">
+                <tr>
+                    <td>${file.provinceCode}</td>
+                    <td>${file.uploadedDate}</td>
+                    <td>${file.uploadedBy}</td>
+                    <td>${file.fileName}</td>
+                    <td>
+<%--                        <button class="btn btn-primary btn-sm" onclick="downloadFile('${file.fileName}')">--%>
+<%--                            Download--%>
+<%--                        </button>--%>
+    <button class="btn btn-primary btn-sm" onclick="downloadZipFile('${file.fileName}', '${file.billCycle}', '${file.division}', '${file.province}')">
+        Download
+    </button>
 
+                    </td>
+                </tr>
+            </c:forEach>
+            </tbody>
+        </table>
+    </c:if>
+    <c:if test="${empty uploadDetails}">
+        <p>No uploads found for the selected criteria.</p>
+    </c:if>
+</div>
 
 <!-- to give a gap to hide the footer -->
 <span id="spanItem" style="min-height: 500px; display: inline-block;"></span>
 
-<div id="tableContainer" class="container">
 </div>
-
 
 <!-- Bootstrap JS and Popper.js (order matters) -->
 <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script> -->
@@ -468,72 +532,132 @@
         filterProvince('DD1');//initial rendering
     });
 </script>
+<%--<script>--%>
+<%--    $(document).ready(function () {--%>
+<%--        // Trigger the AJAX call when the "View" button is clicked--%>
+<%--        $('#click_btn').on('click', function (e) {--%>
+<%--            e.preventDefault();--%>
+
+<%--            // Get the selected values--%>
+<%--            const billCycle = $('#billCycle').val();--%>
+<%--            const division = $('#divisionDropdown').val();--%>
+
+<%--            // Validate inputs--%>
+<%--            if (!billCycle || !division) {--%>
+<%--                alert('Please select both Bill Cycle and Division.');--%>
+<%--                return;--%>
+<%--            }--%>
+
+<%--            console.log("Bill Cycle: "+ billCycle+" Division:" + division);--%>
+
+<%--            // Show a loading spinner--%>
+<%--            $('#tableContainer').html('<div class="spinner"></div>');--%>
+
+<%--            // Make an AJAX call to fetch the uploaded files--%>
+<%--            $.ajax({--%>
+<%--                url: '/PTS/viewUploadDetails', // URL of the controller method--%>
+<%--                method: 'GET',--%>
+<%--                data: {--%>
+<%--                    billCycle: billCycle,--%>
+<%--                    division: division--%>
+<%--                },--%>
+
+<%--                success: function (response) {--%>
+<%--                    // Check if the response contains data--%>
+<%--                    //console.log('Data fetched successfully:', response);--%>
+<%--                    if (!response || response.length === 0) {--%>
+<%--                        $('#tableContainer').html('<p>No uploads found for the selected criteria.</p>');--%>
+<%--                        console.log("No uploads found for the selected criteria.");--%>
+<%--                        return;--%>
+<%--                    }--%>
+
+<%--                    console.log("enter to the successful funation");--%>
+
+<%--                    // Build the table dynamically--%>
+<%--                    let table = `--%>
+<%--                        <table class="table table-bordered">--%>
+<%--                            <thead>--%>
+<%--                                <tr>--%>
+<%--                                    <th>File Name</th>--%>
+<%--                                    <th>Uploaded By</th>--%>
+<%--                                    <th>Uploaded Date</th>--%>
+<%--                                    <th>Province Code</th>--%>
+<%--<!--                                    <th>File Type</th>-->--%>
+<%--                                    <th>Action</th>--%>
+<%--                                </tr>--%>
+<%--                            </thead>--%>
+<%--                            <tbody>--%>
+<%--                    `;--%>
+<%--                    $('#tableContainer').html(table);--%>
+
+<%--                    console.log("enter the adding data display ");--%>
+
+
+<%--                        table += `--%>
+<%--    <c:forEach var="uploadDetails" items="${uploadDetails}">--%>
+<%--        <tr>--%>
+<%--            &lt;%&ndash;<td>${uploadDetails.fileName}</td>&ndash;%&gt;--%>
+<%--            &lt;%&ndash;<td>${uploadDetails.uploadedBy}</td>&ndash;%&gt;--%>
+<%--            &lt;%&ndash;<td>${uploadDetails.uploadedDate}</td>&ndash;%&gt;--%>
+<%--            &lt;%&ndash;<td>${uploadDetails.provinceCode}</td>&ndash;%&gt;--%>
+
+<%--            <td>APNL.zip</td>--%>
+<%--            <td>system</td>--%>
+<%--            <td>2025-06-02</td>--%>
+<%--            <td>WPNL</td>--%>
+<%--            &lt;%&ndash;//<td>${file.fileType}</td>&ndash;%&gt;--%>
+<%--                                        <a href="/downloadFile?fileName=${uploadDetails.fileName}" class="btn btn-sm btn-primary">Download</a>--%>
+<%--        </tr>--%>
+<%--    </c:forEach>--%>
+<%--                        `;--%>
+
+<%--                    $('#tableContainer').html(table);--%>
+<%--                    console.log();--%>
+
+<%--                    table += '</tbody></table>';--%>
+
+<%--                    // Update the table container with the new table--%>
+<%--                    $('#tableContainer').html(table);--%>
+<%--                },--%>
+<%--                error: function () {--%>
+<%--                    alert('Failed to fetch data. Please try again.');--%>
+<%--                    $('#tableContainer').html('');--%>
+<%--                }--%>
+<%--            });--%>
+<%--        });--%>
+<%--    });--%>
+<%--</script>--%>
+
+<style>
+    .selectUnit label, .selectUnit select, .selectUnit input {
+        font-size: small;
+        margin: 0;
+    }
+</style>
+
+<%--<script>--%>
+<%--    function downloadFile(fileName) {--%>
+<%--        const url = `/PTS/downloadFile?fileName=${fileName}`;--%>
+<%--        const anchor = document.createElement('a');--%>
+<%--        anchor.href = url;--%>
+<%--        anchor.download = fileName;--%>
+<%--        document.body.appendChild(anchor);--%>
+<%--        anchor.click();--%>
+<%--        document.body.removeChild(anchor);--%>
+<%--    }--%>
+<%--</script>--%>
+
 <script>
-    $(document).ready(function () {
-        // Ensure the click handler is not duplicated
-        $('#click_btn').off('click').on('click', function (e) {
-            e.preventDefault();
-
-            const licenseCode = $('#divisionDropdown').val();
-            const provinceCode = $('#provinceDropdown').val();
-            const billCycle = $('#billCycle').val();
-
-            if (!licenseCode || !provinceCode || !billCycle) {
-                swal("Warning", "Please select Bill Cycle, Division, and Province", "warning");
-                return;
-            }
-
-            console.log(`Bill Cycle: ${billCycle}, Division: ${licenlicenseCode}, Province: ${provinceCode}`);
-
-            $('#tableContainer').html('<div class="spinner"></div>');
-
-            // Simulate AJAX or replace with real fetch
-            <%--$.ajax({--%>
-            <%--    url: '/getUploadedFiles',--%>
-            <%--    method: 'GET',--%>
-            <%--    data: {--%>
-            <%--        billCycle: billCycle,--%>
-            <%--        division: licenseCode,--%>
-            <%--        province: provinceCode--%>
-            <%--    },--%>
-            <%--    success: function (fileList) {--%>
-            <%--        if (fileList.length === 0) {--%>
-            <%--            $('#tableContainer').html('<p>No files found.</p>');--%>
-            <%--            return;--%>
-            <%--        }--%>
-
-            <%--        let table = `<table class="table table-bordered mt-3">--%>
-            <%--            <thead class="thead-dark">--%>
-            <%--                <tr>--%>
-            <%--                    <th>File Name</th>--%>
-            <%--                    <th>Download</th>--%>
-            <%--                </tr>--%>
-            <%--            </thead>--%>
-            <%--            <tbody>`;--%>
-            <%--        fileList.forEach(function (fileName) {--%>
-            <%--            table += `<tr>--%>
-            <%--            <td>${fileName}</td>--%>
-            <%--            <td>--%>
-            <%--                <a href="/downloadFile?fileName=${encodeURIComponent(fileName)}&billCycle=${billCycle}&division=${licenseCode}&province=${provinceCode}"--%>
-            <%--                   class="btn btn-sm btn-success" target="_blank">Download</a>--%>
-            <%--            </td>--%>
-            <%--        </tr>`;--%>
-            <%--        });--%>
-            <%--        table += '</tbody></table>';--%>
-
-            <%--        $('#tableContainer').html(table);--%>
-            <%--    },--%>
-            <%--    error: function () {--%>
-            <%--        swal("Error", "Failed to fetch files from server", "error");--%>
-            <%--        $('#tableContainer').html('');--%>
-            <%--    }--%>
-            <%--});--%>
-
-        });
-    });
+    function downloadZipFile(fileName, billCycle, division, province) {
+        const url = `/PTS/downloadZipFile?fileName=${fileName}&billCycle=${billCycle}&division=${division}&province=${province}`;
+        console.log("Download URL: " + url);
+        console.log("File Name: " + fileName +
+            ", Bill Cycle: " + billCycle +
+            ", Division: " + division +
+            ", Province: " + province);
+        window.location.href = url;
+    }
 </script>
-
-
 
 
 </body>

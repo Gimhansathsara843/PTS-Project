@@ -490,6 +490,17 @@
 <c:if test="${not empty model.successMessage}">
     <script>
         $(document).ready(function () {
+
+            let  billCycle = $('#billCycle').val();
+            let division = $('#division').val();
+            let province = $('#province').val();
+
+            console.log("Bill Cycle: " + billCycle +
+                        ", Division: " + division +
+                        ", Province: " + province);
+
+
+
             var msg = `<c:out value="${model.successMessage}" escapeXml="true" />`;
             var formattedMsg = msg.replace(/\n/g, "<br>");
             console.log("Alert message in JSP (success): " + msg);
@@ -512,44 +523,7 @@
     </script>
 </c:if>
 
-<%--<c:if test="${fileNameConflict}">--%>
-<%--    <script>--%>
-<%--        $(document).ready(function () {--%>
-<%--            swal({--%>
-<%--                title: "Duplicate File Detected!",--%>
-<%--                text: "The file '${originalFileName}' is already uploaded. It has been renamed to avoid conflict.",--%>
-<%--                type: "warning",--%>
-<%--                confirmButtonText: "OK"--%>
-<%--            });--%>
-<%--        });--%>
-<%--    </script>--%>
-<%--</c:if>--%>
-<%--<c:if test="${model.fileNameConflict}">--%>
-<%--    <script type="text/javascript">--%>
-<%--        window.onload = function () {--%>
-<%--            var userConfirmed = confirm("The file '${model.originalFileName}' already exists. Do you want to overwrite it?");--%>
-<%--            if (userConfirmed) {--%>
-<%--                // Set the overwrite flag and resubmit the form--%>
-<%--                document.getElementById("overwriteFlag").value = "true";--%>
-<%--                document.forms[0].submit();--%>
-<%--            } else {--%>
-<%--                alert("Upload cancelled. Please rename your file.");--%>
-<%--            }--%>
-<%--        };--%>
-<%--    </script>--%>
-<%--</c:if>--%>
 
-<%--<c:if test="${showConfirmation}">--%>
-<%--    <script>--%>
-<%--        if (confirm("${msg}\nDo you want to proceed with uploading more files?")) {--%>
-<%--            let url = window.location.href;--%>
-<%--            url += (url.indexOf('?') > -1 ? '&' : '?') + 'confirmOverwrite=yes';--%>
-<%--            window.location.href = url;--%>
-<%--        } else {--%>
-<%--            alert("Upload canceled.");--%>
-<%--        }--%>
-<%--    </script>--%>
-<%--</c:if>--%>
 
 
 </body>
