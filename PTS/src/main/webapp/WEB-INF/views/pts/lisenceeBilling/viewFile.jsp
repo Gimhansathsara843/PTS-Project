@@ -395,37 +395,6 @@
 <div id="tableContainer1" class="container"></div>
 <div id="tableContainer2" class="container"></div>
 
-<%--<c:if test="${not empty uploadDetails}">--%>
-<%--    <table class="table table-bordered">--%>
-<%--        <thead>--%>
-<%--        <tr>--%>
-<%--            <th>File Name</th>--%>
-<%--            <th>Uploaded By</th>--%>
-<%--            <th>Uploaded Date</th>--%>
-<%--            <th>Province Code</th>--%>
-<%--            <th>File Type</th>--%>
-<%--        </tr>--%>
-<%--        </thead>--%>
-<%--        <tbody>--%>
-<%--        <c:forEach items="${uploadDetails}" var="file" >--%>
-<%--            <tr>--%>
-<%--                <td>${file.fileName}</td>--%>
-<%--                <td>${file.uploadedBy}</td>--%>
-<%--                <td>${file.uploadedDate}</td>--%>
-<%--                <td>${file.provinceCode}</td>--%>
-<%--                <td>${file.fileType}</td>--%>
-<%--            </tr>--%>
-<%--        </c:forEach>--%>
-<%--        </tbody>--%>
-<%--    </table>--%>
-<%--</c:if>--%>
-
-<%--<c:if test="${empty uploadDetails}">--%>
-<%--    <p>No uploads found for the selected bill cycle and division.</p>--%>
-<%--</c:if>--%>
-
-
-
 <div class="container mt-5">
     <c:if test="${not empty uploadDetails}">
         <table class="table table-bordered">
@@ -461,8 +430,8 @@
     </c:if>
 </div>
 
-<!-- to give a gap to hide the footer -->
-<span id="spanItem" style="min-height: 500px; display: inline-block;"></span>
+<%--<!-- to give a gap to hide the footer -->--%>
+<%--<span id="spanItem" style="min-height: 500px; display: inline-block;"></span>--%>
 
 </div>
 
@@ -528,101 +497,6 @@
         filterProvince('DD1');//initial rendering
     });
 </script>
-<%--<script>--%>
-<%--    $(document).ready(function () {--%>
-<%--        // Trigger the AJAX call when the "View" button is clicked--%>
-<%--        $('#click_btn').on('click', function (e) {--%>
-<%--            e.preventDefault();--%>
-
-<%--            // Get the selected values--%>
-<%--            const billCycle = $('#billCycle').val();--%>
-<%--            const division = $('#divisionDropdown').val();--%>
-
-<%--            // Validate inputs--%>
-<%--            if (!billCycle || !division) {--%>
-<%--                alert('Please select both Bill Cycle and Division.');--%>
-<%--                return;--%>
-<%--            }--%>
-
-<%--            console.log("Bill Cycle: "+ billCycle+" Division:" + division);--%>
-
-<%--            // Show a loading spinner--%>
-<%--            $('#tableContainer').html('<div class="spinner"></div>');--%>
-
-<%--            // Make an AJAX call to fetch the uploaded files--%>
-<%--            $.ajax({--%>
-<%--                url: '/PTS/viewUploadDetails', // URL of the controller method--%>
-<%--                method: 'GET',--%>
-<%--                data: {--%>
-<%--                    billCycle: billCycle,--%>
-<%--                    division: division--%>
-<%--                },--%>
-
-<%--                success: function (response) {--%>
-<%--                    // Check if the response contains data--%>
-<%--                    //console.log('Data fetched successfully:', response);--%>
-<%--                    if (!response || response.length === 0) {--%>
-<%--                        $('#tableContainer').html('<p>No uploads found for the selected criteria.</p>');--%>
-<%--                        console.log("No uploads found for the selected criteria.");--%>
-<%--                        return;--%>
-<%--                    }--%>
-
-<%--                    console.log("enter to the successful funation");--%>
-
-<%--                    // Build the table dynamically--%>
-<%--                    let table = `--%>
-<%--                        <table class="table table-bordered">--%>
-<%--                            <thead>--%>
-<%--                                <tr>--%>
-<%--                                    <th>File Name</th>--%>
-<%--                                    <th>Uploaded By</th>--%>
-<%--                                    <th>Uploaded Date</th>--%>
-<%--                                    <th>Province Code</th>--%>
-<%--<!--                                    <th>File Type</th>-->--%>
-<%--                                    <th>Action</th>--%>
-<%--                                </tr>--%>
-<%--                            </thead>--%>
-<%--                            <tbody>--%>
-<%--                    `;--%>
-<%--                    $('#tableContainer').html(table);--%>
-
-<%--                    console.log("enter the adding data display ");--%>
-
-
-<%--                        table += `--%>
-<%--    <c:forEach var="uploadDetails" items="${uploadDetails}">--%>
-<%--        <tr>--%>
-<%--            &lt;%&ndash;<td>${uploadDetails.fileName}</td>&ndash;%&gt;--%>
-<%--            &lt;%&ndash;<td>${uploadDetails.uploadedBy}</td>&ndash;%&gt;--%>
-<%--            &lt;%&ndash;<td>${uploadDetails.uploadedDate}</td>&ndash;%&gt;--%>
-<%--            &lt;%&ndash;<td>${uploadDetails.provinceCode}</td>&ndash;%&gt;--%>
-
-<%--            <td>APNL.zip</td>--%>
-<%--            <td>system</td>--%>
-<%--            <td>2025-06-02</td>--%>
-<%--            <td>WPNL</td>--%>
-<%--            &lt;%&ndash;//<td>${file.fileType}</td>&ndash;%&gt;--%>
-<%--                                        <a href="/downloadFile?fileName=${uploadDetails.fileName}" class="btn btn-sm btn-primary">Download</a>--%>
-<%--        </tr>--%>
-<%--    </c:forEach>--%>
-<%--                        `;--%>
-
-<%--                    $('#tableContainer').html(table);--%>
-<%--                    console.log();--%>
-
-<%--                    table += '</tbody></table>';--%>
-
-<%--                    // Update the table container with the new table--%>
-<%--                    $('#tableContainer').html(table);--%>
-<%--                },--%>
-<%--                error: function () {--%>
-<%--                    alert('Failed to fetch data. Please try again.');--%>
-<%--                    $('#tableContainer').html('');--%>
-<%--                }--%>
-<%--            });--%>
-<%--        });--%>
-<%--    });--%>
-<%--</script>--%>
 
 <style>
     .selectUnit label, .selectUnit select, .selectUnit input {
