@@ -36,8 +36,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -73,7 +75,7 @@ public class FileController {
         String province = model.getProvince();
 
         String zipSavePath = PathMMS.getReportPath() + File.separator + billCycle + File.separator + division + File.separator + province;
-        String extractionPath = PathMMS.getReportPath() + File.separator + billCycle + File.separator + division;
+        String extractionPath = PathMMS.getReportPath() + File.separator + billCycle + File.separator + division + File.separator + province + "_zip";
 
         boolean filesProcessed = false;
         StringBuilder processingResults = new StringBuilder();
@@ -124,7 +126,30 @@ public class FileController {
 
                 File zipFile = new File(zipDir, uniqueFilename);
                 file.transferTo(zipFile);
+
+                // Delete existing extracted folder
+                if (extractDir.exists()) {
+                    deleteDirectory(extractDir);
+                }
                 ZipExtractor.unzip(zipFile.getAbsolutePath(), extractionPath);
+
+
+                // Move contents of the extracted folder to the parent folder
+                File extractedFolder = new File(extractionPath, province);
+                if (extractedFolder.exists() && extractedFolder.isDirectory()) {
+                    File[] extractedFiles = extractedFolder.listFiles();
+                    if (extractedFiles != null) {
+                        for (File extractedFile : extractedFiles) {
+                            Files.move(
+                                    extractedFile.toPath(),
+                                    new File(extractionPath, extractedFile.getName()).toPath(),
+                                    StandardCopyOption.REPLACE_EXISTING
+                            );
+                        }
+                    }
+                    // Delete the now-empty extracted folder
+                    deleteDirectory(extractedFolder);
+                }
 
                 try {
                     FileUploadHeader header = new FileUploadHeader();
@@ -163,6 +188,19 @@ public class FileController {
         mv.addObject("provinceList", new ObjectMapper().writeValueAsString(modelService.getAllProvinces(provinceList)));
 
         return mv;
+    }
+
+    // Utility method to delete a directory and its contents
+    private boolean deleteDirectory(File directory) {
+        if (directory.isDirectory()) {
+            File[] files = directory.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    deleteDirectory(file);
+                }
+            }
+        }
+        return directory.delete();
     }
 
     private String generateUniqueFileName(String baseName, String billCycle, String division, String province) {
@@ -267,6 +305,7 @@ public class FileController {
             if (!uploadDetails.isEmpty()) {
                 // Optional: Log details
                 for (FileUploadHeader upload : uploadDetails) {
+
                     System.out.println("File Name: " + upload.getFileName());
                     System.out.println("Uploaded By: " + upload.getUploadedBy());
                     System.out.println("Uploaded Date: " + upload.getUploadedDate());

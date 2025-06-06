@@ -189,6 +189,11 @@ public class FileUploadHeaderDaoImpl implements FileUploadHeaderDao {
         return query.getResultList();
     }
 
+    // src/main/java/com/it/ceb/pts/repo/ProvinceDao.java
+//    public interface ProvinceDao {
+//        @Query("SELECT p.provinceName FROM Province p WHERE p.provinceCode = :provinceCode")
+//        String findProvinceNameByCode(@Param("provinceCode") String provinceCode);
+//    }
 
 }
 

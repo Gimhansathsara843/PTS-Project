@@ -427,7 +427,6 @@
 
 
 <div class="container mt-5">
-    <h2>Uploaded Files</h2>
     <c:if test="${not empty uploadDetails}">
         <table class="table table-bordered">
             <thead>
@@ -447,9 +446,6 @@
                     <td>${file.uploadedBy}</td>
                     <td>${file.fileName}</td>
                     <td>
-<%--                        <button class="btn btn-primary btn-sm" onclick="downloadFile('${file.fileName}')">--%>
-<%--                            Download--%>
-<%--                        </button>--%>
     <button class="btn btn-primary btn-sm" onclick="downloadZipFile('${file.fileName}', '${file.billCycle}', '${file.division}', '${file.province}')">
         Download
     </button>
